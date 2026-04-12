@@ -5,7 +5,7 @@ Music theory
 
 ## Description
 This dataset categorizes songs based on vocal range, helping singers choose songs that match their comfort level.
-
+Along with song tagging, it will also include analysis + recommendation + feedback loop.
 ---
 
 ## 🧠 Tags Explanation
