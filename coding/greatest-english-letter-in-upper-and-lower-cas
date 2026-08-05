@@ -1,0 +1,21 @@
+class Solution {
+public:
+    string greatestLetter(string s) {
+        unordered_set<char> st(s.begin(), s.end());
+        char gL = 0;
+
+        for(char ch: s)
+        {
+            if((ch >= 97) &&(st.find(ch-32) != st.end()))
+            {
+                gL = max(gL, char(ch - 32));
+            }
+            else if(st.find(ch+32) != st.end())
+            {
+                gL = max(gL, char(ch));
+            }
+        }
+
+        return (gL>0)?string(1, gL):"";
+    }
+};
