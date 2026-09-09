@@ -43,7 +43,6 @@ function BotanicalCompanion({ progress, flying }) {
         <path className="branch branch-2" d="M54 395 C62 379 70 368 78 357" />
         <path className="branch branch-3" d="M53 218 C44 201 34 190 23 182" />
         <path className="branch branch-4" d="M49 70 C58 58 66 48 75 39" />
-
         <g className="leaf leaf-1"><path d="M25 541 C11 521 7 501 20 489 C37 494 42 514 25 541Z"/><path d="M25 537L18 498"/></g>
         <g className="leaf leaf-2"><path d="M78 357 C83 334 94 321 104 331 C107 349 97 362 78 357Z"/><path d="M80 354L98 333"/></g>
         <g className="leaf leaf-3"><path d="M23 182 C7 166 4 146 17 137 C33 145 36 163 23 182Z"/><path d="M23 178L15 145"/></g>
@@ -52,22 +51,22 @@ function BotanicalCompanion({ progress, flying }) {
 
       <div className="ladybug" style={{ top: "var(--bug-y)", left: "var(--bug-x)" }}>
         <svg viewBox="0 0 60 60" className="ladybug-art">
-          <g className="bug-wing bug-wing-left">
-            <path d="M29.4 16C20.5 16.8 14 23 14 32C14 41 19.8 47 29.4 48V16Z" fill="#8A203A" />
-            <circle cx="20" cy="28" r="2.1" fill="#F4D3DE" opacity=".75" />
-            <circle cx="23" cy="39" r="1.7" fill="#F4D3DE" opacity=".7" />
+          {/* One unified shell; the flight wings sit behind it and only appear while flying. */}
+          <g className="flight-wings">
+            <path className="flight-wing flight-wing-left" d="M28.5 19C20 15 12 17 10 24C8 30 14 35 23 36L29 30Z" />
+            <path className="flight-wing flight-wing-right" d="M31.5 19C40 15 48 17 50 24C52 30 46 35 37 36L31 30Z" />
           </g>
-          <g className="bug-wing bug-wing-right">
-            <path d="M30.6 16C39.5 16.8 46 23 46 32C46 41 40.2 47 30.6 48V16Z" fill="#8A203A" />
-            <circle cx="40" cy="28" r="2.1" fill="#F4D3DE" opacity=".75" />
-            <circle cx="37" cy="39" r="1.7" fill="#F4D3DE" opacity=".7" />
-          </g>
-          <path d="M30 16V48" stroke="#4A2730" strokeWidth="1.35" strokeLinecap="round" />
-          <ellipse cx="30" cy="15" rx="6" ry="5" fill="#3A292D" />
-          <path d="M26 12L21 7M34 12L39 7" stroke="#3A292D" strokeWidth="1.2" strokeLinecap="round" />
-          <path d="M24 15L19 14M36 15L41 14" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".75" />
-          <circle cx="28" cy="13.5" r=".9" fill="#FFF8E8" />
-          <circle cx="32" cy="13.5" r=".9" fill="#FFF8E8" />
+          <path className="bug-shell" d="M30 15C20.5 15 13.5 22.1 13.5 32.1C13.5 42.1 20.2 49 30 49C39.8 49 46.5 42.1 46.5 32.1C46.5 22.1 39.5 15 30 15Z" />
+          <circle cx="21" cy="27" r="2.1" className="bug-spot" />
+          <circle cx="23.5" cy="39" r="1.7" className="bug-spot" />
+          <circle cx="39" cy="27" r="2.1" className="bug-spot" />
+          <circle cx="36.5" cy="39" r="1.7" className="bug-spot" />
+          <path className="bug-seam" d="M30 17V47" />
+          <ellipse className="bug-head" cx="30" cy="15" rx="6" ry="5" />
+          <path className="bug-antenna" d="M26 12L21 7M34 12L39 7" />
+          <path className="bug-antenna-side" d="M24 15L19 14M36 15L41 14" />
+          <circle cx="28" cy="13.5" r=".9" className="bug-eye" />
+          <circle cx="32" cy="13.5" r=".9" className="bug-eye" />
         </svg>
         <span className="bug-shadow" />
       </div>
@@ -126,37 +125,17 @@ export default function Home() {
     <main>
       <div className="cursor-glow" ref={cursor} />
       <BotanicalCompanion progress={scrollProgress} flying={flying} />
-
-      <nav className="nav">
-        <div />
-        <div className="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="/blog">Blog</a><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a></div>
-      </nav>
-
+      <nav className="nav"><div /><div className="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="/blog">Blog</a><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a></div></nav>
       <section className="hero" id="top">
         <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
-        <div className="hero-card card-yellow"><span>01</span><b>build</b></div>
-        <div className="hero-card card-blue"><span>02</span><b>learn</b></div>
-        <div className="hero-card card-white"><span>03</span><b>create</b></div>
-        <div className="hero-content reveal">
-          <p className="eyebrow">Software Engineer · C++ · Problem Solving</p>
-          <h1>Hi, I'm <em>Saiesha.</em></h1>
-          <p className="hero-copy">I build software, solve problems, and stay curious about how things work.</p>
-          <div className="actions"><a className="button primary" href="#about">Explore</a><a className="button" href="/blog">Read my blog ↗</a></div>
-        </div>
+        <div className="hero-card card-yellow"><span>01</span><b>build</b></div><div className="hero-card card-blue"><span>02</span><b>learn</b></div><div className="hero-card card-white"><span>03</span><b>create</b></div>
+        <div className="hero-content reveal"><p className="eyebrow">Software Engineer · C++ · Problem Solving</p><h1>Hi, I'm <em>Saiesha.</em></h1><p className="hero-copy">I build software, solve problems, and stay curious about how things work.</p><div className="actions"><a className="button primary" href="#about">Explore</a><a className="button" href="/blog">Read my blog ↗</a></div></div>
         <div className="scroll-note">scroll to explore ↓</div>
       </section>
-
       <div className="ticker" aria-hidden="true"><span>CURIOUS BY DEFAULT</span><span>·</span><span>BUILDING & LEARNING</span><span>·</span><span>C++ & SYSTEMS</span><span>·</span><span>CURIOUS BY DEFAULT</span><span>·</span><span>BUILDING & LEARNING</span><span>·</span><span>C++ & SYSTEMS</span></div>
-
-      <section className="section about-section" id="about">
-        <div className="section-label reveal">01 / About me</div>
-        <div className="about-layout"><h2 className="reveal">Engineer by profession.<br /><em>Curious by default.</em></h2><div className="about-copy reveal"><p>I'm a software engineer with a strong C++ foundation and an interest in systems, algorithms, and practical software.</p><p>I like understanding why something works, not just making it work. Outside engineering, I explore AI, music, writing, and ideas that make me curious.</p></div></div>
-      </section>
-
+      <section className="section about-section" id="about"><div className="section-label reveal">01 / About me</div><div className="about-layout"><h2 className="reveal">Engineer by profession.<br /><em>Curious by default.</em></h2><div className="about-copy reveal"><p>I'm a software engineer with a strong C++ foundation and an interest in systems, algorithms, and practical software.</p><p>I like understanding why something works, not just making it work. Outside engineering, I explore AI, music, writing, and ideas that make me curious.</p></div></div></section>
       <section className="skills-section" id="skills"><div className="section-label reveal">02 / Things I work with</div><div className="skill-cloud reveal">{skills.map((skill, index) => <span key={skill} className={`skill skill-${index}`}>{skill}</span>)}</div></section>
-
       <section className="section blog-section"><div className="section-label reveal">03 / From the blog</div><div className="blog-heading reveal"><h2>Notes from<br /><em>the journey.</em></h2><a className="round-link" href="/blog">See all ↗</a></div><div className="posts">{posts.map((post, index) => <a className="post reveal" href={post.href} key={post.title}><span className="post-number">0{index + 1}</span><div><p className="date">{post.date}</p><h3>{post.title}</h3><p>{post.excerpt}</p><span className="read">Read post ↗</span></div></a>)}</div></section>
-
       <section className="closing reveal"><div className="closing-shape">✦</div><p className="eyebrow">One more thing</p><h2>Let's make the internet<br /><em>a little more interesting.</em></h2><a className="button primary" href="https://github.com/saiesha" target="_blank" rel="noreferrer">Find me on GitHub ↗</a></section>
       <footer><span>Saiesha</span><span>Built with Next.js · Hosted on Vercel</span></footer>
     </main>
