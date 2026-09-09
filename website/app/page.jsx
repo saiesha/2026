@@ -10,9 +10,9 @@ const posts = [
 const skills = ["C++", "Python", "C", "SQL", "DSA", "AI"];
 
 const work = [
-  { number: "01", title: "Software engineering", detail: "Building reliable software and learning how to make it better.", tag: "C++" },
+  { number: "01", title: "Engineering", detail: "Building reliable software and learning how to make it better.", tag: "C++" },
   { number: "02", title: "Problem solving", detail: "Algorithms, data structures, and the satisfaction of finding the clean solution.", tag: "DSA" },
-  { number: "03", title: "Things I'm exploring", detail: "AI, creative projects, music, and whatever catches my curiosity next.", tag: "Now" }
+  { number: "03", title: "Exploring", detail: "AI, creative projects, music, and whatever catches my curiosity next.", tag: "Now" }
 ];
 
 export default function Home() {
@@ -76,7 +76,7 @@ export default function Home() {
         <div className="hero-content reveal">
           <p className="eyebrow"><span /> Software Engineer</p>
           <h1>Hi, I'm<br /><span>Saiesha.</span></h1>
-          <p className="hero-copy">I make things, learn things, and occasionally get very excited about a good idea.</p>
+          <p className="hero-copy">I build software, solve problems, and follow whatever I'm curious about next.</p>
           <div className="hero-actions">
             <a className="button primary" href="#work">See my work <span>↓</span></a>
             <a className="text-link" href="/blog">Read my notes <span>↗</span></a>
