@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 const posts = [
   { title: "What I'm learning in 2026", excerpt: "DSA, C++, systems, AI, and becoming a better engineer.", date: "September 2026", href: "/blog/what-im-learning-in-2026" },
@@ -9,71 +9,8 @@ const posts = [
 
 const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
-function BotanicalCompanion({ progress, flying }) {
-  const positions = [
-    { y: 8, x: 57 },
-    { y: 25, x: 30 },
-    { y: 45, x: 64 },
-    { y: 65, x: 28 },
-    { y: 84, x: 61 }
-  ];
-  const slot = Math.min(positions.length - 1, Math.round(progress * (positions.length - 1)));
-  const target = positions[slot];
-  const previous = useRef(slot);
-  const [landing, setLanding] = useState(false);
-
-  useEffect(() => {
-    if (previous.current !== slot) {
-      setLanding(true);
-      const timer = window.setTimeout(() => setLanding(false), 560);
-      previous.current = slot;
-      return () => window.clearTimeout(timer);
-    }
-  }, [slot]);
-
-  return (
-    <div className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`} style={{ "--bug-y": `${target.y}%`, "--bug-x": `${target.x}%` }} aria-hidden="true">
-      <svg className="botanical-stem" viewBox="0 0 90 760" preserveAspectRatio="none">
-        <path className="stem-line" d="M52 760 C67 692 48 640 57 575 C67 507 43 458 55 395 C68 326 45 278 53 218 C61 155 40 103 49 0" />
-        <path className="branch branch-1" d="M55 575 C47 558 36 548 24 541" />
-        <path className="branch branch-2" d="M54 395 C62 379 70 368 78 357" />
-        <path className="branch branch-3" d="M53 218 C44 201 34 190 23 182" />
-        <path className="branch branch-4" d="M49 70 C58 58 66 48 75 39" />
-        <g className="leaf leaf-1"><path d="M25 541 C11 521 7 501 20 489 C37 494 42 514 25 541Z"/><path d="M25 537L18 498"/></g>
-        <g className="leaf leaf-2"><path d="M78 357 C83 334 94 321 104 331 C107 349 97 362 78 357Z"/><path d="M80 354L98 333"/></g>
-        <g className="leaf leaf-3"><path d="M23 182 C7 166 4 146 17 137 C33 145 36 163 23 182Z"/><path d="M23 178L15 145"/></g>
-        <g className="leaf leaf-4"><path d="M75 39 C77 20 87 8 98 15 C101 30 91 42 75 39Z"/><path d="M77 37L93 19"/></g>
-      </svg>
-
-      <div className="ladybug" style={{ top: "var(--bug-y)", left: "var(--bug-x)" }}>
-        <svg viewBox="0 0 60 60" className="ladybug-art">
-          <g className="flight-wings">
-            <path className="flight-wing flight-wing-left" d="M27 21C20 14 11 15 9 22C7 28 12 35 24 35L29 30Z" />
-            <path className="flight-wing flight-wing-right" d="M33 21C40 14 49 15 51 22C53 28 48 35 36 35L31 30Z" />
-          </g>
-
-          <path className="bug-shell" d="M30 14C20.4 14 12.8 21.7 12.8 32.1C12.8 42.6 20.2 50 30 50C39.8 50 47.2 42.6 47.2 32.1C47.2 21.7 39.6 14 30 14Z" />
-          <path className="bug-shell-highlight" d="M17 28C18.8 21.5 24 17.2 30 17.2C36 17.2 41.2 21.5 43 28C39 25.2 35 24 30 24C25 24 21 25.2 17 28Z" />
-          <circle cx="20.5" cy="28" r="2.15" className="bug-spot" />
-          <circle cx="23.2" cy="39.5" r="1.7" className="bug-spot" />
-          <circle cx="39.5" cy="28" r="2.15" className="bug-spot" />
-          <circle cx="36.8" cy="39.5" r="1.7" className="bug-spot" />
-          <path className="bug-seam" d="M30 18V47" />
-          <ellipse className="bug-head" cx="30" cy="14.5" rx="5.6" ry="4.6" />
-          <path className="bug-antenna" d="M26 12L21 7M34 12L39 7" />
-          <circle cx="28.1" cy="13.2" r=".8" className="bug-eye" />
-          <circle cx="31.9" cy="13.2" r=".8" className="bug-eye" />
-        </svg>
-        <span className="bug-shadow" />
-      </div>
-    </div>
-  );
-}
-
 export default function Home() {
   const cursor = useRef(null);
-  const [scrollProgress, setScrollProgress] = useState(0);
-  const [flying, setFlying] = useState(false);
 
   useEffect(() => {
     const move = (event) => {
@@ -92,35 +29,9 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
-  useEffect(() => {
-    let raf = 0;
-    let last = window.scrollY;
-    let timeout;
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(() => {
-        const max = document.documentElement.scrollHeight - window.innerHeight;
-        const current = window.scrollY;
-        setScrollProgress(max > 0 ? Math.min(1, Math.max(0, current / max)) : 0);
-        setFlying(Math.abs(current - last) > 1);
-        last = current;
-        window.clearTimeout(timeout);
-        timeout = window.setTimeout(() => setFlying(false), 180);
-      });
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
-    return () => {
-      window.removeEventListener("scroll", onScroll);
-      cancelAnimationFrame(raf);
-      window.clearTimeout(timeout);
-    };
-  }, []);
-
   return (
     <main>
       <div className="cursor-glow" ref={cursor} />
-      <BotanicalCompanion progress={scrollProgress} flying={flying} />
       <nav className="nav"><div /><div className="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="/blog">Blog</a><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a></div></nav>
       <section className="hero" id="top">
         <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
