@@ -9,11 +9,63 @@ const posts = [
 
 const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
+function BotanicalCompanion({ progress, flying }) {
+  const positions = [8, 25, 43, 61, 79, 94];
+  const slot = Math.min(positions.length - 1, Math.round(progress * (positions.length - 1)));
+  const y = positions[slot];
+  const previous = useRef(slot);
+  const [landing, setLanding] = useState(false);
+
+  useEffect(() => {
+    if (previous.current !== slot) {
+      setLanding(true);
+      const timer = window.setTimeout(() => setLanding(false), 500);
+      previous.current = slot;
+      return () => window.clearTimeout(timer);
+    }
+  }, [slot]);
+
+  return (
+    <div className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`} style={{ "--bug-y": `${y}%` }} aria-hidden="true">
+      <svg className="botanical-stem" viewBox="0 0 90 760" preserveAspectRatio="none">
+        <path className="stem-line" d="M47 760 C45 660 53 610 43 530 C34 455 52 400 45 325 C38 245 57 180 44 0" />
+        <g className="leaf leaf-1"><path d="M44 665 C25 643 8 650 5 671 C22 682 36 678 44 665Z"/><path d="M42 663L12 669"/></g>
+        <g className="leaf leaf-2"><path d="M48 535 C66 512 83 518 86 540 C70 550 57 547 48 535Z"/><path d="M51 534L79 538"/></g>
+        <g className="leaf leaf-3"><path d="M43 412 C24 390 9 396 6 416 C21 426 35 424 43 412Z"/><path d="M41 411L13 416"/></g>
+        <g className="leaf leaf-4"><path d="M49 286 C67 263 82 269 85 291 C70 300 58 298 49 286Z"/><path d="M52 285L78 289"/></g>
+        <g className="leaf leaf-5"><path d="M43 157 C25 135 11 140 7 160 C21 170 34 168 43 157Z"/><path d="M40 156L14 160"/></g>
+        <g className="leaf leaf-6"><path d="M47 54 C64 32 79 38 82 58 C67 68 55 65 47 54Z"/><path d="M50 53L76 57"/></g>
+      </svg>
+
+      <div className="ladybug" style={{ top: `${y}%` }}>
+        <svg viewBox="0 0 52 52" className="ladybug-art">
+          <g className="bug-wing bug-wing-left">
+            <path d="M26 12C17 10 10 16 10 26C10 36 17 43 26 42V12Z" fill="#8A203A" />
+          </g>
+          <g className="bug-wing bug-wing-right">
+            <path d="M26 12C35 10 42 16 42 26C42 36 35 43 26 42V12Z" fill="#8A203A" />
+          </g>
+          <path d="M26 12V42" stroke="#4A2730" strokeWidth="1.4" strokeLinecap="round" />
+          <circle cx="17" cy="23" r="2.2" fill="#F4D3DE" opacity=".75" />
+          <circle cx="21" cy="33" r="1.8" fill="#F4D3DE" opacity=".7" />
+          <circle cx="35" cy="23" r="2.2" fill="#F4D3DE" opacity=".75" />
+          <circle cx="31" cy="33" r="1.8" fill="#F4D3DE" opacity=".7" />
+          <ellipse cx="26" cy="12" rx="5.5" ry="4.5" fill="#3A292D" />
+          <path d="M22 10L18 6M30 10L34 6" stroke="#3A292D" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M20 13L16 12M32 13L36 12" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".8" />
+          <circle cx="24" cy="11" r=".9" fill="#FFF8E8" />
+          <circle cx="28" cy="11" r=".9" fill="#FFF8E8" />
+        </svg>
+        <span className="bug-shadow" />
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   const cursor = useRef(null);
-  const lastScroll = useRef(0);
-  const [scrollingDown, setScrollingDown] = useState(false);
-  const [hopping, setHopping] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [flying, setFlying] = useState(false);
 
   useEffect(() => {
     const move = (event) => {
@@ -33,110 +85,34 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let raf = 0;
+    let last = window.scrollY;
+    let timeout;
     const onScroll = () => {
-      const current = window.scrollY;
-      const down = current > lastScroll.current && current > 30;
-      setScrollingDown(down);
-      setHopping(true);
-      window.clearTimeout(onScroll.timer);
-      onScroll.timer = window.setTimeout(() => setHopping(false), 520);
-      lastScroll.current = current;
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(() => {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        const current = window.scrollY;
+        setScrollProgress(max > 0 ? Math.min(1, Math.max(0, current / max)) : 0);
+        setFlying(Math.abs(current - last) > 1);
+        last = current;
+        window.clearTimeout(timeout);
+        timeout = window.setTimeout(() => setFlying(false), 180);
+      });
     };
     window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
     return () => {
       window.removeEventListener("scroll", onScroll);
-      window.clearTimeout(onScroll.timer);
+      cancelAnimationFrame(raf);
+      window.clearTimeout(timeout);
     };
   }, []);
 
   return (
     <main>
-      <style jsx global>{`
-        :root {
-          --cream:#fff9e8; --butter:#f6d77a; --butter-light:#fff2bd;
-          --sky:#c7e5f2; --sky-light:#eaf6fb; --pink:#f4d3de;
-          --cherry:#7a1838; --cherry-dark:#5c1028; --ink:#30282b;
-          --muted:#746b6d; --line:#e7d9d8; --white:#fffdf8;
-        }
-        body { background:var(--cream); color:var(--ink); }
-        .cursor-glow { background:radial-gradient(circle,rgba(199,229,242,.38),transparent 68%); }
-        .logo,.logo span,.dot,h1 em,h2 em,.read,.section-label { color:var(--cherry); }
-        .eyebrow { background:var(--butter-light); color:var(--cherry); }
-        .button { border-color:var(--cherry); }
-        .button.primary { background:var(--cherry); color:#fffdf8; }
-        .links a:hover { background:var(--sky); color:var(--cherry); }
-        .hero-orbit { border-color:rgba(122,24,56,.13); }
-        .card-yellow { background:var(--butter); }
-        .card-blue { background:var(--sky); }
-        .card-white { background:var(--pink); }
-        .ticker { background:var(--cherry); color:#fff9e8; }
-        .skills-section { background:var(--sky-light); }
-        .skill { border-color:var(--line); background:var(--white); }
-        .skill:nth-child(odd) { background:var(--butter); }
-        .skill:nth-child(3n) { background:var(--sky); transform:rotate(-3deg); }
-        .skill:nth-child(4n) { background:var(--pink); }
-        .round-link { background:var(--butter); color:var(--cherry); }
-        .post { border-color:var(--line); background:var(--white); }
-        .post:nth-child(2) { background:var(--butter-light); }
-        .post-number { color:var(--cherry); }
-        .closing { background:var(--butter); }
-        .closing-shape { color:var(--cherry); }
-
-        /* Cute illustrated puppy companion */
-        .scroll-pup {
-          position:fixed; right:30px; top:18px; z-index:40; width:78px; height:78px;
-          pointer-events:none; transition:top .72s cubic-bezier(.68,-.35,.27,1.35);
-          filter:drop-shadow(0 8px 7px rgba(92,16,40,.14));
-        }
-        .scroll-pup.down { top:calc(100vh - 96px); }
-        .pup-art { width:78px; height:78px; overflow:visible; }
-        .pup-body { animation:pup-bob 1.4s ease-in-out infinite; transform-origin:39px 50px; }
-        .pup-tail { transform-box:fill-box; transform-origin:left center; animation:pup-tail .55s ease-in-out infinite alternate; }
-        .pup-ear-left { transform-box:fill-box; transform-origin:bottom right; animation:pup-ear-left .9s ease-in-out infinite alternate; }
-        .pup-ear-right { transform-box:fill-box; transform-origin:bottom left; animation:pup-ear-right 1.1s ease-in-out infinite alternate; }
-        .pup-eye { animation:pup-blink 4s infinite; transform-box:fill-box; transform-origin:center; }
-        .scroll-pup.hop .pup-art { animation:pup-hop .58s cubic-bezier(.2,.8,.3,1); }
-        @keyframes pup-bob { 0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)} }
-        @keyframes pup-tail { to{transform:rotate(16deg)} }
-        @keyframes pup-ear-left { to{transform:rotate(-4deg)} }
-        @keyframes pup-ear-right { to{transform:rotate(5deg)} }
-        @keyframes pup-blink { 0%,43%,47%,100%{transform:scaleY(1)}45%{transform:scaleY(.12)} }
-        @keyframes pup-hop { 0%{transform:translateY(0) rotate(0)}35%{transform:translateY(-18px) rotate(-4deg)}65%{transform:translateY(-3px) rotate(2deg)}100%{transform:translateY(0) rotate(0)} }
-        @media(max-width:600px){ .scroll-pup{right:10px;scale:.78;transform-origin:top right}.scroll-pup.down{top:calc(100vh - 78px)} }
-        @media(prefers-reduced-motion:reduce){ .scroll-pup *,.scroll-pup{animation:none!important;transition:none!important} }
-      `}</style>
-
       <div className="cursor-glow" ref={cursor} />
-
-      <div className={`scroll-pup ${scrollingDown ? "down" : ""} ${hopping ? "hop" : ""}`} aria-hidden="true">
-        <svg className="pup-art" viewBox="0 0 78 78" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <g className="pup-body">
-            <ellipse cx="39" cy="48" rx="21" ry="17" fill="#E9BC8F" />
-            <ellipse cx="39" cy="52" rx="13" ry="10" fill="#F9E7D0" />
-            <path d="M23 53C20 58 20 64 23 67" stroke="#8B4D4A" strokeWidth="4" strokeLinecap="round" />
-            <path d="M55 53C58 58 58 64 55 67" stroke="#8B4D4A" strokeWidth="4" strokeLinecap="round" />
-            <circle cx="27" cy="66" r="3" fill="#7A1838" />
-            <circle cx="51" cy="66" r="3" fill="#7A1838" />
-          </g>
-          <g className="pup-tail">
-            <path d="M57 49C70 48 72 37 65 34" stroke="#E9BC8F" strokeWidth="7" strokeLinecap="round" />
-            <path d="M57 49C70 48 72 37 65 34" stroke="#7A1838" strokeOpacity=".22" strokeWidth="1.5" strokeLinecap="round" />
-          </g>
-          <path className="pup-ear-left" d="M20 27C13 23 12 12 17 9C23 7 28 14 28 22Z" fill="#C98D68" stroke="#7A1838" strokeWidth="1.8" />
-          <path className="pup-ear-right" d="M58 27C65 23 66 12 61 9C55 7 50 14 50 22Z" fill="#C98D68" stroke="#7A1838" strokeWidth="1.8" />
-          <ellipse cx="39" cy="31" rx="21" ry="19" fill="#E9BC8F" stroke="#7A1838" strokeWidth="1.8" />
-          <path d="M26 25C29 20 34 18 39 19C44 18 49 20 52 25" stroke="#F7D9B5" strokeWidth="5" strokeLinecap="round" opacity=".8" />
-          <ellipse className="pup-eye" cx="32" cy="31" rx="2.5" ry="3.2" fill="#30282B" />
-          <ellipse className="pup-eye" cx="46" cy="31" rx="2.5" ry="3.2" fill="#30282B" />
-          <ellipse cx="39" cy="39" rx="8" ry="6" fill="#F9E7D0" />
-          <ellipse cx="39" cy="37" rx="3" ry="2.2" fill="#7A1838" />
-          <path d="M39 39C37 43 34 43 32 41M39 39C41 43 44 43 46 41" stroke="#7A1838" strokeWidth="1.4" strokeLinecap="round" />
-          <path d="M32 25L29 23M46 25L49 23" stroke="#7A1838" strokeWidth="1.3" strokeLinecap="round" opacity=".6" />
-          <path d="M29 48C34 53 44 53 49 48" stroke="#7A1838" strokeWidth="3" strokeLinecap="round" opacity=".8" />
-          <circle cx="24" cy="38" r="3" fill="#F4D3DE" opacity=".9" />
-          <circle cx="54" cy="38" r="3" fill="#F4D3DE" opacity=".9" />
-        </svg>
-      </div>
+      <BotanicalCompanion progress={scrollProgress} flying={flying} />
 
       <nav className="nav">
         <div />
