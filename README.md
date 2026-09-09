@@ -4,29 +4,28 @@ I'm a **Software Engineer** focused on **C++ and problem solving**.
 
 ## 🎓 Education
 
-- **M.E., Computer Science** — Birla Institute of Technology and Science, Pilani · Sep 2021 - Jun 2023
-- **B.Tech, Computer Science** — GITAM Deemed University · Jun 2016 - Jun 2020
+- **M.E., Computer Science** — BITS Pilani · 2021–2023
+- **B.Tech, Computer Science** — GITAM · 2016–2020
 
-## 🧭 What I'm working on
+## 💻 What I'm working on
 
-### Problem solving
-The `coding/` directory tracks ongoing practice including data structures, algorithms, and database problems.
-
-### Building
-The `Projects/` directory contains projects I'm developing currently.
-
-### Learning
 - Data Structures & Algorithms
-- Operating Systems
-- DBMS
-- Computer Networks
-- System Design
-- Practical AI and developer tooling
+- C++ and software engineering
+- Systems programming
+- SQL and databases
+- AI and practical experiments
+- Personal projects
 
-## 🛠️ Core toolkit
+## 🚀 Projects
 
-**Languages:** C++, Python, C, Shell Scripting, SQL  
-**Systems:** Storage Systems, IPC, D-Bus, Storage Security, TCG concepts  
-**Engineering:** Problem Solving, Automation, Debugging, Software Design
+- 🎤 **Music Singer App** — exploring vocal-range analysis and song recommendations
+
+See [`Projects/`](./Projects) for more.
+
+## 🛠️ Tech
+
+**C++ · Python · C · SQL · Shell Scripting**
 
 ---
+
+*Learning, building, and getting better at engineering — one project at a time.*
