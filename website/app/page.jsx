@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const posts = [
   {
@@ -21,6 +21,9 @@ const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
 export default function Home() {
   const cursor = useRef(null);
+  const lastScroll = useRef(0);
+  const [scrollingDown, setScrollingDown] = useState(false);
+  const [hopping, setHopping] = useState(false);
 
   useEffect(() => {
     const move = (event) => {
@@ -44,9 +47,28 @@ export default function Home() {
     return () => observer.disconnect();
   }, []);
 
+  useEffect(() => {
+    const onScroll = () => {
+      const current = window.scrollY;
+      const down = current > lastScroll.current && current > 30;
+      setScrollingDown(down);
+      setHopping(true);
+      window.clearTimeout(onScroll.timer);
+      onScroll.timer = window.setTimeout(() => setHopping(false), 480);
+      lastScroll.current = current;
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.clearTimeout(onScroll.timer);
+    };
+  }, []);
+
   return (
     <main>
       <div className="cursor-glow" ref={cursor} />
+      <div className={`scroll-pup ${scrollingDown ? "down" : ""} ${hopping ? "hop" : ""}`} aria-hidden="true">🐶</div>
 
       <nav className="nav">
         <a className="logo" href="#top">Saiesha<span>.</span></a>
