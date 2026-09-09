@@ -18,6 +18,18 @@ const work = [
 export default function Home() {
   const cursor = useRef(null);
   const [activeWork, setActiveWork] = useState(0);
+  const [dark, setDark] = useState(false);
+
+  useEffect(() => {
+    const saved = localStorage.getItem("saiesha-theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    setDark(saved ? saved === "dark" : prefersDark);
+  }, []);
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = dark ? "dark" : "light";
+    localStorage.setItem("saiesha-theme", dark ? "dark" : "light");
+  }, [dark]);
 
   useEffect(() => {
     const move = (event) => {
@@ -41,12 +53,15 @@ export default function Home() {
       <div className="cursor-glow" ref={cursor} />
 
       <nav className="nav">
-        <a className="nav-mark" href="#top" aria-label="Back to top">SC / 26</a>
+        <a className="nav-mark" href="#top" aria-label="Back to top">Saiesha<span>.</span></a>
         <div className="links">
           <a href="#about">About</a>
           <a href="#work">Work</a>
           <a href="/blog">Writing</a>
           <a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a>
+          <button className="theme-toggle" onClick={() => setDark((value) => !value)} aria-label={dark ? "Switch to light mode" : "Switch to dark mode"} title={dark ? "Light mode" : "Dark mode"}>
+            <span>{dark ? "☼" : "☾"}</span>
+          </button>
         </div>
       </nav>
 
@@ -172,7 +187,6 @@ export default function Home() {
             <a href="/blog">Writing ↗</a>
           </div>
         </div>
-        <div className="closing-mark" aria-hidden="true">SC</div>
       </section>
 
       <footer>
