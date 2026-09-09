@@ -63,7 +63,7 @@ footer span:first-child { color:var(--ink);font-weight:800; }
 .reveal { opacity:0; transform:translateY(35px); transition:opacity .8s ease,transform .8s ease; }
 .reveal.visible { opacity:1; transform:none; }
 
-/* Botanical companion: one quiet vine, four intentional leaf perches, and a ladybug with neck-hinged wings. */
+/* Botanical companion: a quiet vine with four deliberate perches. */
 .botanical-companion { position:fixed; right:18px; top:0; width:92px; height:100vh; z-index:20; pointer-events:none; }
 .botanical-stem { position:absolute; inset:0; width:92px; height:100%; overflow:visible; }
 .stem-line,.branch { fill:none; stroke:rgba(104,132,91,.25); stroke-width:1.05; stroke-linecap:round; }
@@ -72,17 +72,28 @@ footer span:first-child { color:var(--ink);font-weight:800; }
 .leaf path:last-child { fill:none; stroke:rgba(89,113,78,.20); stroke-width:.75; stroke-linecap:round; }
 .ladybug { position:absolute; width:60px; height:60px; transform:translate(-50%,-50%); transition:top .48s cubic-bezier(.22,.78,.22,1),left .48s cubic-bezier(.22,.78,.22,1); }
 .ladybug-art { width:60px; height:60px; overflow:visible; filter:drop-shadow(0 4px 4px rgba(48,40,43,.10)); animation:bug-breathe 2.8s ease-in-out infinite; }
-.bug-wing { transform-box:fill-box; transform-origin:50% 10%; }
+.flight-wings { opacity:0; transform-origin:50% 29%; }
+.flight-wing { fill:#f6d77a; fill-opacity:.55; stroke:#7a1838; stroke-opacity:.18; stroke-width:.8; }
+.bug-shell { fill:#8a203a; stroke:#5c1028; stroke-width:1.15; }
+.bug-spot { fill:#f4d3de; opacity:.72; }
+.bug-seam { fill:none; stroke:#4a2730; stroke-width:1.25; stroke-linecap:round; }
+.bug-head { fill:#3a292d; }
+.bug-antenna,.bug-antenna-side { fill:none; stroke:#3a292d; stroke-linecap:round; }
+.bug-antenna { stroke-width:1.2; }
+.bug-antenna-side { stroke-width:1; opacity:.75; }
+.bug-eye { fill:#fff8e8; }
 .is-flying .ladybug-art { animation:bug-fly .5s ease-in-out infinite alternate; }
-.is-flying .bug-wing-left { animation:wing-left .17s ease-in-out infinite alternate; }
-.is-flying .bug-wing-right { animation:wing-right .17s ease-in-out infinite alternate; }
+.is-flying .flight-wings { opacity:1; animation:flight-wings .22s ease-in-out infinite alternate; }
+.is-flying .flight-wing-left { animation:flight-wing-left .22s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:100% 70%; }
+.is-flying .flight-wing-right { animation:flight-wing-right .22s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:0% 70%; }
 .is-landing .ladybug-art { animation:land .52s cubic-bezier(.2,.8,.2,1); }
 .bug-shadow { position:absolute; left:17px; bottom:2px; width:26px; height:5px; border-radius:50%; background:rgba(60,72,52,.10); filter:blur(2px); transition:transform .3s,opacity .3s; }
 .is-flying .bug-shadow { transform:scale(.62); opacity:.35; }
 @keyframes bug-breathe { 0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-2px) rotate(1deg)} }
 @keyframes bug-fly { from{transform:translateY(-5px) rotate(-5deg)}to{transform:translateY(5px) rotate(5deg)} }
-@keyframes wing-left { from{transform:rotate(0deg)}to{transform:rotate(-38deg) translate(-2px,-5px)} }
-@keyframes wing-right { from{transform:rotate(0deg)}to{transform:rotate(38deg) translate(2px,-5px)} }
+@keyframes flight-wings { from{transform:translateY(1px)}to{transform:translateY(-3px)} }
+@keyframes flight-wing-left { from{transform:rotate(0deg) translate(-1px,0)}to{transform:rotate(-26deg) translate(-2px,-4px)} }
+@keyframes flight-wing-right { from{transform:rotate(0deg) translate(1px,0)}to{transform:rotate(26deg) translate(2px,-4px)} }
 @keyframes land { 0%{transform:translateY(-15px) scale(1.07)}55%{transform:translateY(3px) scale(.95)}100%{transform:translateY(0) scale(1)} }
 @keyframes float { 0%,100%{translate:0 0}50%{translate:0 -18px} }
 @keyframes spin { to{rotate:360deg} }
