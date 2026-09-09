@@ -32,19 +32,113 @@ export default function Home() {
   return (
     <main>
       <div className="cursor-glow" ref={cursor} />
-      <nav className="nav"><div /><div className="links"><a href="#about">About</a><a href="#skills">Skills</a><a href="/blog">Blog</a><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a></div></nav>
+
+      <nav className="nav">
+        <a className="nav-mark" href="#top" aria-label="Back to top">SC / 26</a>
+        <div className="links">
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="/blog">Writing</a>
+          <a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a>
+        </div>
+      </nav>
+
       <section className="hero" id="top">
-        <div className="hero-orbit orbit-one" /><div className="hero-orbit orbit-two" />
-        <div className="hero-card card-yellow"><span>01</span><b>build</b></div><div className="hero-card card-blue"><span>02</span><b>learn</b></div><div className="hero-card card-white"><span>03</span><b>create</b></div>
-        <div className="hero-content reveal"><p className="eyebrow">Software Engineer · C++ · Problem Solving</p><h1>Hi, I'm <em>Saiesha.</em></h1><p className="hero-copy">I build software, solve problems, and stay curious about how things work.</p><div className="actions"><a className="button primary" href="#about">Explore</a><a className="button" href="/blog">Read my blog ↗</a></div></div>
-        <div className="scroll-note">scroll to explore ↓</div>
+        <div className="hero-grid" aria-hidden="true" />
+        <div className="hero-accent hero-accent-yellow" aria-hidden="true" />
+        <div className="hero-accent hero-accent-blue" aria-hidden="true" />
+        <div className="hero-content reveal">
+          <p className="eyebrow"><span /> Software Engineer · C++ · Systems</p>
+          <h1>Building things<br /><span>that make sense.</span></h1>
+          <p className="hero-copy">I'm Saiesha — a software engineer who likes understanding how things work, solving hard problems, and learning something new along the way.</p>
+          <div className="actions">
+            <a className="button primary" href="#about">About me <span>↓</span></a>
+            <a className="text-link" href="/blog">Read my writing <span>↗</span></a>
+          </div>
+        </div>
+        <div className="hero-side reveal">
+          <div className="side-rule" />
+          <p>Currently exploring</p>
+          <strong>Algorithms<br />Systems<br />AI</strong>
+          <span className="side-year">2026</span>
+        </div>
+        <div className="scroll-note">Scroll <span>↓</span></div>
       </section>
-      <div className="ticker" aria-hidden="true"><span>CURIOUS BY DEFAULT</span><span>·</span><span>BUILDING & LEARNING</span><span>·</span><span>C++ & SYSTEMS</span><span>·</span><span>CURIOUS BY DEFAULT</span><span>·</span><span>BUILDING & LEARNING</span><span>·</span><span>C++ & SYSTEMS</span></div>
-      <section className="section about-section" id="about"><div className="section-label reveal">01 / About me</div><div className="about-layout"><h2 className="reveal">Engineer by profession.<br /><em>Curious by default.</em></h2><div className="about-copy reveal"><p>I'm a software engineer with a strong C++ foundation and an interest in systems, algorithms, and practical software.</p><p>I like understanding why something works, not just making it work. Outside engineering, I explore AI, music, writing, and ideas that make me curious.</p></div></div></section>
-      <section className="skills-section" id="skills"><div className="section-label reveal">02 / Things I work with</div><div className="skill-cloud reveal">{skills.map((skill, index) => <span key={skill} className={`skill skill-${index}`}>{skill}</span>)}</div></section>
-      <section className="section blog-section"><div className="section-label reveal">03 / From the blog</div><div className="blog-heading reveal"><h2>Notes from<br /><em>the journey.</em></h2><a className="round-link" href="/blog">See all ↗</a></div><div className="posts">{posts.map((post, index) => <a className="post reveal" href={post.href} key={post.title}><span className="post-number">0{index + 1}</span><div><p className="date">{post.date}</p><h3>{post.title}</h3><p>{post.excerpt}</p><span className="read">Read post ↗</span></div></a>)}</div></section>
-      <section className="closing reveal"><div className="closing-shape">✦</div><p className="eyebrow">One more thing</p><h2>Let's make the internet<br /><em>a little more interesting.</em></h2><a className="button primary" href="https://github.com/saiesha" target="_blank" rel="noreferrer">Find me on GitHub ↗</a></section>
-      <footer><span>Saiesha</span><span>Built with Next.js · Hosted on Vercel</span></footer>
+
+      <div className="ticker" aria-hidden="true">
+        <span>CURIOSITY →</span><span>BUILD →</span><span>LEARN →</span><span>WRITE →</span><span>CURIOSITY →</span><span>BUILD →</span><span>LEARN →</span><span>WRITE →</span>
+      </div>
+
+      <section className="section about-section" id="about">
+        <div className="section-label reveal">01 <span>/</span> About</div>
+        <div className="about-layout">
+          <div className="about-heading reveal">
+            <p className="mini-kicker">A little context</p>
+            <h2>Engineer by profession.<br /><em>Curious by default.</em></h2>
+          </div>
+          <div className="about-copy reveal">
+            <p>I'm a software engineer with a strong C++ foundation and an interest in systems, algorithms, and practical software.</p>
+            <p>I care about the reasoning behind a solution — not just getting it to work. Outside engineering, I explore AI, music, writing, and ideas that make me curious.</p>
+            <div className="about-meta"><span>Based in India</span><span>Open to opportunities</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="skills-section" id="skills">
+        <div className="skills-inner">
+          <div className="section-label reveal">02 <span>/</span> Toolkit</div>
+          <div className="skills-intro reveal">
+            <h2>Tools I use<br /><em>to think & build.</em></h2>
+            <p>Languages, concepts, and systems I keep coming back to.</p>
+          </div>
+          <div className="skill-list reveal">
+            {skills.map((skill, index) => (
+              <div key={skill} className="skill-row">
+                <span>0{index + 1}</span>
+                <strong>{skill}</strong>
+                <i>↗</i>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section blog-section">
+        <div className="section-label reveal">03 <span>/</span> Writing</div>
+        <div className="blog-heading reveal">
+          <div><p className="mini-kicker">Notes, lessons & rabbit holes</p><h2>Thinking<br /><em>out loud.</em></h2></div>
+          <a className="round-link" href="/blog">All notes <span>↗</span></a>
+        </div>
+        <div className="posts">
+          {posts.map((post, index) => (
+            <a className="post reveal" href={post.href} key={post.title}>
+              <span className="post-number">0{index + 1}</span>
+              <div>
+                <p className="date">{post.date}</p>
+                <h3>{post.title}</h3>
+                <p>{post.excerpt}</p>
+                <span className="read">Read post <b>↗</b></span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      <section className="closing reveal">
+        <div className="closing-grid" aria-hidden="true" />
+        <div className="closing-copy">
+          <p className="eyebrow"><span /> Elsewhere</p>
+          <h2>Still curious?</h2>
+          <p>You'll probably find me building something, learning something, or writing about it.</p>
+          <a className="button dark" href="https://github.com/saiesha" target="_blank" rel="noreferrer">Visit GitHub <span>↗</span></a>
+        </div>
+        <div className="closing-mark" aria-hidden="true">SC</div>
+      </section>
+
+      <footer>
+        <span>Saiesha Chevvakula</span>
+        <span>© 2026 · Built with Next.js</span>
+      </footer>
     </main>
   );
 }
