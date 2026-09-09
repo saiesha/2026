@@ -109,6 +109,26 @@ export default function Home() {
       h1 .name::after { left:0; right:0; bottom:-7px; height:8px; transform:rotate(-1.5deg); }
       html[data-theme="dark"] h1 .name { color:#f8f7f2; }
       html[data-theme="dark"] h1 .name::after { background:#b4e1ff; }
+      html[data-theme="dark"] .closing { background:#0b0e15; color:#f8f7f2; }
+      html[data-theme="dark"] .closing .eyebrow { color:#f8f7f2; }
+      html[data-theme="dark"] .closing .eyebrow span { border-color:#f8f7f2; }
+      html[data-theme="dark"] .closing-links a { color:#f8f7f2; border-color:rgba(248,247,242,.55); }
+      html[data-theme="dark"] .closing h2 em { color:#b4e1ff; }
+      @media (max-width: 700px) {
+        .closing { padding:42px 28px; min-height:430px; }
+        .closing-system { right:20px; top:24px; width:230px; height:170px; opacity:.75; }
+        .system-node { min-width:52px; height:23px; padding:0 7px; font-size:6px; }
+        .system-node:nth-child(2) { left:12px; top:35px; }
+        .system-node:nth-child(3) { right:10px; top:58px; }
+        .system-node:nth-child(4) { left:28px; bottom:18px; }
+        .system-node:nth-child(5) { right:20px; bottom:28px; }
+        .system-core { left:96px; top:70px; width:38px; height:38px; }
+        .system-line.one { width:76px; left:50px; top:51px; }
+        .system-line.two { width:70px; left:130px; top:87px; }
+        .system-line.three { width:62px; left:110px; top:118px; }
+        .system-line.four { width:58px; left:55px; top:130px; }
+        .system-label { left:12px; bottom:8px; font-size:6px; }
+      }
     `}</style>
     <main>
       <div className="cursor-glow" ref={cursor} />
