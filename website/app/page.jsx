@@ -32,11 +32,7 @@ function BotanicalCompanion({ progress, flying }) {
   }, [slot]);
 
   return (
-    <div
-      className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`}
-      style={{ "--bug-y": `${target.y}%`, "--bug-x": `${target.x}%` }}
-      aria-hidden="true"
-    >
+    <div className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`} style={{ "--bug-y": `${target.y}%`, "--bug-x": `${target.x}%` }} aria-hidden="true">
       <svg className="botanical-stem" viewBox="0 0 90 760" preserveAspectRatio="none">
         <path className="stem-line" d="M52 760 C67 692 48 640 57 575 C67 507 43 458 55 395 C68 326 45 278 53 218 C61 155 40 103 49 0" />
         <path className="branch branch-1" d="M55 575 C47 558 36 548 24 541" />
@@ -51,22 +47,22 @@ function BotanicalCompanion({ progress, flying }) {
 
       <div className="ladybug" style={{ top: "var(--bug-y)", left: "var(--bug-x)" }}>
         <svg viewBox="0 0 60 60" className="ladybug-art">
-          {/* One unified shell; the flight wings sit behind it and only appear while flying. */}
           <g className="flight-wings">
-            <path className="flight-wing flight-wing-left" d="M28.5 19C20 15 12 17 10 24C8 30 14 35 23 36L29 30Z" />
-            <path className="flight-wing flight-wing-right" d="M31.5 19C40 15 48 17 50 24C52 30 46 35 37 36L31 30Z" />
+            <path className="flight-wing flight-wing-left" d="M27 21C20 14 11 15 9 22C7 28 12 35 24 35L29 30Z" />
+            <path className="flight-wing flight-wing-right" d="M33 21C40 14 49 15 51 22C53 28 48 35 36 35L31 30Z" />
           </g>
-          <path className="bug-shell" d="M30 15C20.5 15 13.5 22.1 13.5 32.1C13.5 42.1 20.2 49 30 49C39.8 49 46.5 42.1 46.5 32.1C46.5 22.1 39.5 15 30 15Z" />
-          <circle cx="21" cy="27" r="2.1" className="bug-spot" />
-          <circle cx="23.5" cy="39" r="1.7" className="bug-spot" />
-          <circle cx="39" cy="27" r="2.1" className="bug-spot" />
-          <circle cx="36.5" cy="39" r="1.7" className="bug-spot" />
-          <path className="bug-seam" d="M30 17V47" />
-          <ellipse className="bug-head" cx="30" cy="15" rx="6" ry="5" />
+
+          <path className="bug-shell" d="M30 14C20.4 14 12.8 21.7 12.8 32.1C12.8 42.6 20.2 50 30 50C39.8 50 47.2 42.6 47.2 32.1C47.2 21.7 39.6 14 30 14Z" />
+          <path className="bug-shell-highlight" d="M17 28C18.8 21.5 24 17.2 30 17.2C36 17.2 41.2 21.5 43 28C39 25.2 35 24 30 24C25 24 21 25.2 17 28Z" />
+          <circle cx="20.5" cy="28" r="2.15" className="bug-spot" />
+          <circle cx="23.2" cy="39.5" r="1.7" className="bug-spot" />
+          <circle cx="39.5" cy="28" r="2.15" className="bug-spot" />
+          <circle cx="36.8" cy="39.5" r="1.7" className="bug-spot" />
+          <path className="bug-seam" d="M30 18V47" />
+          <ellipse className="bug-head" cx="30" cy="14.5" rx="5.6" ry="4.6" />
           <path className="bug-antenna" d="M26 12L21 7M34 12L39 7" />
-          <path className="bug-antenna-side" d="M24 15L19 14M36 15L41 14" />
-          <circle cx="28" cy="13.5" r=".9" className="bug-eye" />
-          <circle cx="32" cy="13.5" r=".9" className="bug-eye" />
+          <circle cx="28.1" cy="13.2" r=".8" className="bug-eye" />
+          <circle cx="31.9" cy="13.2" r=".8" className="bug-eye" />
         </svg>
         <span className="bug-shadow" />
       </div>
