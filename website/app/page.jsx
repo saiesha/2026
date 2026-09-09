@@ -54,7 +54,7 @@ export default function Home() {
       setScrollingDown(down);
       setHopping(true);
       window.clearTimeout(onScroll.timer);
-      onScroll.timer = window.setTimeout(() => setHopping(false), 480);
+      onScroll.timer = window.setTimeout(() => setHopping(false), 520);
       lastScroll.current = current;
     };
 
@@ -68,7 +68,20 @@ export default function Home() {
   return (
     <main>
       <div className="cursor-glow" ref={cursor} />
-      <div className={`scroll-pup ${scrollingDown ? "down" : ""} ${hopping ? "hop" : ""}`} aria-hidden="true">🐶</div>
+
+      <div className={`scroll-pup ${scrollingDown ? "down" : ""} ${hopping ? "hop" : ""}`} aria-hidden="true">
+        <div className="pup-ear pup-ear-left" />
+        <div className="pup-ear pup-ear-right" />
+        <div className="pup-head">
+          <div className="pup-eye pup-eye-left" />
+          <div className="pup-eye pup-eye-right" />
+          <div className="pup-muzzle"><span /></div>
+        </div>
+        <div className="pup-body" />
+        <div className="pup-leg pup-leg-left" />
+        <div className="pup-leg pup-leg-right" />
+        <div className="pup-tail" />
+      </div>
 
       <nav className="nav">
         <a className="logo" href="#top">Saiesha<span>.</span></a>
@@ -90,9 +103,7 @@ export default function Home() {
         <div className="hero-content reveal">
           <p className="eyebrow">Software Engineer · C++ · Problem Solving</p>
           <h1>Hi, I'm <em>Saiesha.</em></h1>
-          <p className="hero-copy">
-            I build software, solve problems, and stay curious about how things work.
-          </p>
+          <p className="hero-copy">I build software, solve problems, and stay curious about how things work.</p>
           <div className="actions">
             <a className="button primary" href="#about">Explore</a>
             <a className="button" href="/blog">Read my blog ↗</a>
@@ -112,14 +123,8 @@ export default function Home() {
         <div className="about-layout">
           <h2 className="reveal">Engineer by profession.<br /><em>Curious by default.</em></h2>
           <div className="about-copy reveal">
-            <p>
-              I'm a software engineer with a strong C++ foundation and an interest in systems,
-              algorithms, and practical software.
-            </p>
-            <p>
-              I like understanding why something works, not just making it work. Outside engineering,
-              I explore AI, music, writing, and ideas that make me curious.
-            </p>
+            <p>I'm a software engineer with a strong C++ foundation and an interest in systems, algorithms, and practical software.</p>
+            <p>I like understanding why something works, not just making it work. Outside engineering, I explore AI, music, writing, and ideas that make me curious.</p>
           </div>
         </div>
       </section>
