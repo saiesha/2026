@@ -71,7 +71,9 @@ export default function Home() {
       html[data-theme="dark"] .button.primary { color: #10131b; background: #f8f7f2; }
       html[data-theme="dark"] .button.primary:hover { box-shadow: 6px 6px 0 #ab87ff; }
       html[data-theme="dark"] .closing-links a { border-color: rgba(248,247,242,.55); }
-      html[data-theme="dark"] .closing { background: #0b0e15; }
+      html[data-theme="dark"] .closing { background: #0b0e15; color: #f8f7f2; }
+      html[data-theme="dark"] .closing .eyebrow { color: #f8f7f2; }
+      html[data-theme="dark"] .closing-links a { color: #f8f7f2; }
       html[data-theme="dark"] h1 .hello { color: #c7b4ff; }
       h1 .hello { color: #6f48d9; }
       h1 .name { position: relative; display: inline-block; width: max-content; color: #24324a; }
