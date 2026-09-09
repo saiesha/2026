@@ -11,12 +11,11 @@ const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
 function BotanicalCompanion({ progress, flying }) {
   const positions = [
-    { y: 9, x: 54 },
-    { y: 24, x: 22 },
-    { y: 39, x: 58 },
-    { y: 55, x: 19 },
-    { y: 71, x: 56 },
-    { y: 87, x: 24 }
+    { y: 84, x: 61 },
+    { y: 65, x: 28 },
+    { y: 45, x: 64 },
+    { y: 25, x: 30 },
+    { y: 8, x: 57 }
   ];
   const slot = Math.min(positions.length - 1, Math.round(progress * (positions.length - 1)));
   const target = positions[slot];
@@ -26,7 +25,7 @@ function BotanicalCompanion({ progress, flying }) {
   useEffect(() => {
     if (previous.current !== slot) {
       setLanding(true);
-      const timer = window.setTimeout(() => setLanding(false), 500);
+      const timer = window.setTimeout(() => setLanding(false), 560);
       previous.current = slot;
       return () => window.clearTimeout(timer);
     }
@@ -39,33 +38,36 @@ function BotanicalCompanion({ progress, flying }) {
       aria-hidden="true"
     >
       <svg className="botanical-stem" viewBox="0 0 90 760" preserveAspectRatio="none">
-        <path className="stem-line" d="M48 760 C43 690 56 625 45 560 C35 495 55 430 45 365 C36 300 56 235 44 170 C39 105 50 58 45 0" />
-        <g className="leaf leaf-1"><path d="M44 665 C25 643 8 650 5 671 C22 682 36 678 44 665Z"/><path d="M42 663L12 669"/></g>
-        <g className="leaf leaf-2"><path d="M48 535 C66 512 83 518 86 540 C70 550 57 547 48 535Z"/><path d="M51 534L79 538"/></g>
-        <g className="leaf leaf-3"><path d="M43 412 C24 390 9 396 6 416 C21 426 35 424 43 412Z"/><path d="M41 411L13 416"/></g>
-        <g className="leaf leaf-4"><path d="M49 286 C67 263 82 269 85 291 C70 300 58 298 49 286Z"/><path d="M52 285L78 289"/></g>
-        <g className="leaf leaf-5"><path d="M43 157 C25 135 11 140 7 160 C21 170 34 168 43 157Z"/><path d="M40 156L14 160"/></g>
-        <g className="leaf leaf-6"><path d="M47 54 C64 32 79 38 82 58 C67 68 55 65 47 54Z"/><path d="M50 53L76 57"/></g>
+        <path className="stem-line" d="M52 760 C67 692 48 640 57 575 C67 507 43 458 55 395 C68 326 45 278 53 218 C61 155 40 103 49 0" />
+        <path className="branch branch-1" d="M55 575 C47 558 36 548 24 541" />
+        <path className="branch branch-2" d="M54 395 C62 379 70 368 78 357" />
+        <path className="branch branch-3" d="M53 218 C44 201 34 190 23 182" />
+        <path className="branch branch-4" d="M49 70 C58 58 66 48 75 39" />
+
+        <g className="leaf leaf-1"><path d="M25 541 C11 521 7 501 20 489 C37 494 42 514 25 541Z"/><path d="M25 537L18 498"/></g>
+        <g className="leaf leaf-2"><path d="M78 357 C83 334 94 321 104 331 C107 349 97 362 78 357Z"/><path d="M80 354L98 333"/></g>
+        <g className="leaf leaf-3"><path d="M23 182 C7 166 4 146 17 137 C33 145 36 163 23 182Z"/><path d="M23 178L15 145"/></g>
+        <g className="leaf leaf-4"><path d="M75 39 C77 20 87 8 98 15 C101 30 91 42 75 39Z"/><path d="M77 37L93 19"/></g>
       </svg>
 
       <div className="ladybug" style={{ top: "var(--bug-y)", left: "var(--bug-x)" }}>
-        <svg viewBox="0 0 52 52" className="ladybug-art">
+        <svg viewBox="0 0 60 60" className="ladybug-art">
           <g className="bug-wing bug-wing-left">
-            <path d="M25.5 14C18 13 12 18 12 27C12 35 17 40 25.5 41V14Z" fill="#8A203A" />
+            <path d="M29.4 16C20.5 16.8 14 23 14 32C14 41 19.8 47 29.4 48V16Z" fill="#8A203A" />
+            <circle cx="20" cy="28" r="2.1" fill="#F4D3DE" opacity=".75" />
+            <circle cx="23" cy="39" r="1.7" fill="#F4D3DE" opacity=".7" />
           </g>
           <g className="bug-wing bug-wing-right">
-            <path d="M26.5 14C34 13 40 18 40 27C40 35 35 40 26.5 41V14Z" fill="#8A203A" />
+            <path d="M30.6 16C39.5 16.8 46 23 46 32C46 41 40.2 47 30.6 48V16Z" fill="#8A203A" />
+            <circle cx="40" cy="28" r="2.1" fill="#F4D3DE" opacity=".75" />
+            <circle cx="37" cy="39" r="1.7" fill="#F4D3DE" opacity=".7" />
           </g>
-          <path d="M26 13V41" stroke="#4A2730" strokeWidth="1.2" strokeLinecap="round" />
-          <circle cx="18" cy="23" r="2" fill="#F4D3DE" opacity=".72" />
-          <circle cx="21" cy="33" r="1.6" fill="#F4D3DE" opacity=".68" />
-          <circle cx="34" cy="23" r="2" fill="#F4D3DE" opacity=".72" />
-          <circle cx="31" cy="33" r="1.6" fill="#F4D3DE" opacity=".68" />
-          <ellipse cx="26" cy="12.5" rx="5" ry="4" fill="#3A292D" />
-          <path d="M22 10L18 6M30 10L34 6" stroke="#3A292D" strokeWidth="1.1" strokeLinecap="round" />
-          <path d="M20 13L16 12M32 13L36 12" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".75" />
-          <circle cx="24" cy="11.5" r=".8" fill="#FFF8E8" />
-          <circle cx="28" cy="11.5" r=".8" fill="#FFF8E8" />
+          <path d="M30 16V48" stroke="#4A2730" strokeWidth="1.35" strokeLinecap="round" />
+          <ellipse cx="30" cy="15" rx="6" ry="5" fill="#3A292D" />
+          <path d="M26 12L21 7M34 12L39 7" stroke="#3A292D" strokeWidth="1.2" strokeLinecap="round" />
+          <path d="M24 15L19 14M36 15L41 14" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".75" />
+          <circle cx="28" cy="13.5" r=".9" fill="#FFF8E8" />
+          <circle cx="32" cy="13.5" r=".9" fill="#FFF8E8" />
         </svg>
         <span className="bug-shadow" />
       </div>
