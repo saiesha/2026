@@ -72,6 +72,7 @@ export default function Home() {
       html[data-theme="dark"] .button.primary:hover { box-shadow: 6px 6px 0 #ab87ff; }
       html[data-theme="dark"] .closing-links a { border-color: rgba(248,247,242,.55); }
       html[data-theme="dark"] .closing { background: #0b0e15; }
+      html[data-theme="dark"] h1 .hello { color: #c7b4ff; }
     `}</style>
     <main>
       <div className="cursor-glow" ref={cursor} />
@@ -87,7 +88,7 @@ export default function Home() {
       <section className="hero" id="top">
         <div className="hero-content reveal">
           <p className="eyebrow"><span /> Software Engineer</p>
-          <h1><span className="hello">Hi!</span><span className="name">I'm Saiesha.</span></h1>
+          <h1><span className="hello">Hi!</span><span className="name">I'm Saiesha</span></h1>
           <p className="hero-copy">I build software, solve problems, and stay curious about what I can learn next.</p>
           <div className="hero-actions"><a className="button primary" href="#work">See my work <span>↓</span></a><a className="text-link" href="/blog">Read my notes <span>↗</span></a></div>
         </div>
