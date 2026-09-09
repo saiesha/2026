@@ -1,4 +1,4 @@
-# Saiesha — 2026
+# About me
 
 > A public engineering journal documenting how I learn, build, and become a stronger software engineer.
 
