@@ -73,6 +73,11 @@ export default function Home() {
       html[data-theme="dark"] .closing-links a { border-color: rgba(248,247,242,.55); }
       html[data-theme="dark"] .closing { background: #0b0e15; }
       html[data-theme="dark"] h1 .hello { color: #c7b4ff; }
+      h1 .hello { color: #6f48d9; }
+      h1 .name { position: relative; display: inline-block; width: max-content; color: #24324a; }
+      h1 .name::after { left: 0; right: 0; bottom: -7px; height: 8px; transform: rotate(-1.5deg); }
+      html[data-theme="dark"] h1 .name { color: #f8f7f2; }
+      html[data-theme="dark"] h1 .name::after { background: #b4e1ff; }
     `}</style>
     <main>
       <div className="cursor-glow" ref={cursor} />
