@@ -79,6 +79,11 @@ export default function Home() {
       .closing .eyebrow { color: #101827; }
       .closing .eyebrow span { border-color: #101827; }
       .closing-links a { color: #101827; border-color: rgba(16,24,39,.55); }
+      .closing h2 em { color: #6841d1; }
+      html[data-theme="dark"] .closing h2 em { color: #b4e1ff; }
+      .blog-section { position: relative; isolation: isolate; }
+      .blog-section::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); background: #f1f8ff; }
+      html[data-theme="dark"] .blog-section::before { background: #171c28; }
       html[data-theme="dark"] h1 .hello { color: #c7b4ff; }
       h1 .hello { color: #6f48d9; }
       h1 .name { position: relative; display: inline-block; width: max-content; color: #24324a; }
