@@ -11,11 +11,11 @@ const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
 function BotanicalCompanion({ progress, flying }) {
   const positions = [
-    { y: 84, x: 61 },
-    { y: 65, x: 28 },
-    { y: 45, x: 64 },
+    { y: 8, x: 57 },
     { y: 25, x: 30 },
-    { y: 8, x: 57 }
+    { y: 45, x: 64 },
+    { y: 65, x: 28 },
+    { y: 84, x: 61 }
   ];
   const slot = Math.min(positions.length - 1, Math.round(progress * (positions.length - 1)));
   const target = positions[slot];
