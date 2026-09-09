@@ -63,7 +63,7 @@ footer span:first-child { color:var(--ink);font-weight:800; }
 .reveal { opacity:0; transform:translateY(35px); transition:opacity .8s ease,transform .8s ease; }
 .reveal.visible { opacity:1; transform:none; }
 
-/* Botanical companion: a quiet vine with four deliberate perches. */
+/* Delicate botanical companion. The shell itself is the ladybug; only the translucent flight wings are separate. */
 .botanical-companion { position:fixed; right:18px; top:0; width:92px; height:100vh; z-index:20; pointer-events:none; }
 .botanical-stem { position:absolute; inset:0; width:92px; height:100%; overflow:visible; }
 .stem-line,.branch { fill:none; stroke:rgba(104,132,91,.25); stroke-width:1.05; stroke-linecap:round; }
@@ -73,15 +73,14 @@ footer span:first-child { color:var(--ink);font-weight:800; }
 .ladybug { position:absolute; width:60px; height:60px; transform:translate(-50%,-50%); transition:top .48s cubic-bezier(.22,.78,.22,1),left .48s cubic-bezier(.22,.78,.22,1); }
 .ladybug-art { width:60px; height:60px; overflow:visible; filter:drop-shadow(0 4px 4px rgba(48,40,43,.10)); animation:bug-breathe 2.8s ease-in-out infinite; }
 .flight-wings { opacity:0; transform-origin:50% 29%; }
-.flight-wing { fill:#f6d77a; fill-opacity:.55; stroke:#7a1838; stroke-opacity:.18; stroke-width:.8; }
-.bug-shell { fill:#8a203a; stroke:#5c1028; stroke-width:1.15; }
-.bug-spot { fill:#f4d3de; opacity:.72; }
-.bug-seam { fill:none; stroke:#4a2730; stroke-width:1.25; stroke-linecap:round; }
-.bug-head { fill:#3a292d; }
-.bug-antenna,.bug-antenna-side { fill:none; stroke:#3a292d; stroke-linecap:round; }
-.bug-antenna { stroke-width:1.2; }
-.bug-antenna-side { stroke-width:1; opacity:.75; }
-.bug-eye { fill:#fff8e8; }
+.flight-wing { fill:#f6d77a; fill-opacity:.9; stroke:#7a1838; stroke-opacity:.35; stroke-width:.8; }
+.bug-shell { fill:#a52b48; stroke:#6d1632; stroke-width:1.15; }
+.bug-shell-highlight { fill:#c64a61; opacity:.42; }
+.bug-spot { fill:#f8dce4; opacity:.9; }
+.bug-seam { fill:none; stroke:#5a182b; stroke-width:1.25; stroke-linecap:round; }
+.bug-head { fill:#30282b; }
+.bug-antenna { fill:none; stroke:#30282b; stroke-width:1.15; stroke-linecap:round; }
+.bug-eye { fill:#fff9e8; }
 .is-flying .ladybug-art { animation:bug-fly .5s ease-in-out infinite alternate; }
 .is-flying .flight-wings { opacity:1; animation:flight-wings .22s ease-in-out infinite alternate; }
 .is-flying .flight-wing-left { animation:flight-wing-left .22s ease-in-out infinite alternate; transform-box:fill-box; transform-origin:100% 70%; }
