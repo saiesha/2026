@@ -63,32 +63,27 @@ footer span:first-child { color:var(--ink);font-weight:800; }
 .reveal { opacity:0; transform:translateY(35px); transition:opacity .8s ease,transform .8s ease; }
 .reveal.visible { opacity:1; transform:none; }
 
-/* Delicate botanical scroll companion */
-.botanical-companion { position:fixed; right:18px; top:0; width:78px; height:100vh; z-index:20; pointer-events:none; }
-.botanical-stem { position:absolute; inset:0; width:78px; height:100%; overflow:visible; }
-.stem-line { fill:none; stroke:rgba(104,132,91,.34); stroke-width:1.15; stroke-linecap:round; stroke-dasharray:5 4; }
-.leaf { fill:rgba(145,166,126,.26); stroke:rgba(89,113,78,.32); stroke-width:1; }
-.leaf path:last-child { fill:none; stroke:rgba(89,113,78,.25); stroke-width:.8; stroke-linecap:round; }
-.leaf-1 { transform:translate(-5px,10px) rotate(-9deg); transform-origin:44px 665px; }
-.leaf-2 { transform:translate(7px,-5px) rotate(7deg); transform-origin:48px 535px; }
-.leaf-3 { transform:translate(-8px,7px) rotate(-6deg); transform-origin:43px 412px; }
-.leaf-4 { transform:translate(8px,-9px) rotate(8deg); transform-origin:49px 286px; }
-.leaf-5 { transform:translate(-6px,5px) rotate(-8deg); transform-origin:43px 157px; }
-.leaf-6 { transform:translate(7px,3px) rotate(6deg); transform-origin:47px 54px; }
-.ladybug { position:absolute; width:52px; height:52px; transform:translate(-50%,-50%); transition:top .52s cubic-bezier(.22,.78,.22,1),left .52s cubic-bezier(.22,.78,.22,1); }
-.ladybug-art { width:52px; height:52px; overflow:visible; filter:drop-shadow(0 4px 4px rgba(48,40,43,.12)); animation:bug-breathe 2.5s ease-in-out infinite; }
-.bug-wing { transform-box:fill-box; transform-origin:50% 88%; }
+/* Botanical companion: one quiet vine, four intentional leaf perches, and a ladybug with neck-hinged wings. */
+.botanical-companion { position:fixed; right:18px; top:0; width:92px; height:100vh; z-index:20; pointer-events:none; }
+.botanical-stem { position:absolute; inset:0; width:92px; height:100%; overflow:visible; }
+.stem-line,.branch { fill:none; stroke:rgba(104,132,91,.25); stroke-width:1.05; stroke-linecap:round; }
+.branch { stroke:rgba(104,132,91,.19); stroke-width:.9; }
+.leaf { fill:rgba(145,166,126,.20); stroke:rgba(89,113,78,.27); stroke-width:.9; }
+.leaf path:last-child { fill:none; stroke:rgba(89,113,78,.20); stroke-width:.75; stroke-linecap:round; }
+.ladybug { position:absolute; width:60px; height:60px; transform:translate(-50%,-50%); transition:top .48s cubic-bezier(.22,.78,.22,1),left .48s cubic-bezier(.22,.78,.22,1); }
+.ladybug-art { width:60px; height:60px; overflow:visible; filter:drop-shadow(0 4px 4px rgba(48,40,43,.10)); animation:bug-breathe 2.8s ease-in-out infinite; }
+.bug-wing { transform-box:fill-box; transform-origin:50% 10%; }
 .is-flying .ladybug-art { animation:bug-fly .5s ease-in-out infinite alternate; }
-.is-flying .bug-wing-left { animation:wing-left .16s ease-in-out infinite alternate; }
-.is-flying .bug-wing-right { animation:wing-right .16s ease-in-out infinite alternate; }
-.is-landing .ladybug-art { animation:land .5s cubic-bezier(.2,.8,.2,1); }
-.bug-shadow { position:absolute; left:14px; bottom:3px; width:24px; height:5px; border-radius:50%; background:rgba(60,72,52,.12); filter:blur(2px); transition:transform .3s,opacity .3s; }
-.is-flying .bug-shadow { transform:scale(.65); opacity:.45; }
+.is-flying .bug-wing-left { animation:wing-left .17s ease-in-out infinite alternate; }
+.is-flying .bug-wing-right { animation:wing-right .17s ease-in-out infinite alternate; }
+.is-landing .ladybug-art { animation:land .52s cubic-bezier(.2,.8,.2,1); }
+.bug-shadow { position:absolute; left:17px; bottom:2px; width:26px; height:5px; border-radius:50%; background:rgba(60,72,52,.10); filter:blur(2px); transition:transform .3s,opacity .3s; }
+.is-flying .bug-shadow { transform:scale(.62); opacity:.35; }
 @keyframes bug-breathe { 0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-2px) rotate(1deg)} }
-@keyframes bug-fly { from{transform:translateY(-4px) rotate(-5deg)}to{transform:translateY(4px) rotate(5deg)} }
-@keyframes wing-left { from{transform:rotate(0deg) translateY(0)}to{transform:rotate(-34deg) translateY(-2px)} }
-@keyframes wing-right { from{transform:rotate(0deg) translateY(0)}to{transform:rotate(34deg) translateY(-2px)} }
-@keyframes land { 0%{transform:translateY(-16px) scale(1.08)}55%{transform:translateY(4px) scale(.94)}100%{transform:translateY(0) scale(1)} }
+@keyframes bug-fly { from{transform:translateY(-5px) rotate(-5deg)}to{transform:translateY(5px) rotate(5deg)} }
+@keyframes wing-left { from{transform:rotate(0deg)}to{transform:rotate(-38deg) translate(-2px,-5px)} }
+@keyframes wing-right { from{transform:rotate(0deg)}to{transform:rotate(38deg) translate(2px,-5px)} }
+@keyframes land { 0%{transform:translateY(-15px) scale(1.07)}55%{transform:translateY(3px) scale(.95)}100%{transform:translateY(0) scale(1)} }
 @keyframes float { 0%,100%{translate:0 0}50%{translate:0 -18px} }
 @keyframes spin { to{rotate:360deg} }
 @keyframes breathe { 50%{transform:translateY(5px)} }
@@ -98,6 +93,6 @@ footer span:first-child { color:var(--ink);font-weight:800; }
   main{padding:0 24px}.hero{min-height:680px}.hero-content{max-width:620px;padding:50px 0}h1{font-size:clamp(58px,10vw,88px)}.hero-copy{font-size:19px;max-width:480px}.orbit-one{width:500px;height:500px;right:-210px;top:85px}.orbit-two{width:320px;height:320px;right:-100px;top:190px}.hero-card{width:115px;height:145px;padding:14px;border-radius:21px}.hero-card b{font-size:20px}.card-yellow{right:125px;top:120px}.card-blue{right:-5px;top:340px}.card-white{right:160px;top:455px}.about-layout{grid-template-columns:1fr;gap:35px}.skills-section{padding-left:24px;padding-right:24px}
 }
 @media(max-width:600px){
-  main{padding:0 18px}.nav{height:72px}.links{gap:0}.links a{padding:8px}.links a:first-child,.links a:nth-child(2){display:none}.hero{min-height:650px}.hero-content{padding:35px 0;max-width:100%}h1{font-size:clamp(55px,16vw,76px)}.hero-copy{font-size:18px;margin:25px 0;max-width:360px}.hero-card{width:100px;height:125px;padding:12px;border-radius:18px}.hero-card b{font-size:18px}.card-yellow{right:95px;top:120px}.card-blue{right:-10px;top:335px}.card-white{right:120px;top:450px}.orbit-one{width:390px;height:390px;right:-180px;top:100px}.orbit-two{width:250px;height:250px;right:-95px;top:210px}.scroll-note{bottom:20px}.section{padding:85px 0}.skills-section{padding-top:85px;padding-bottom:85px}.skill{padding:14px 20px;font-size:25px}.posts{grid-template-columns:1fr;gap:18px}.blog-heading{align-items:start;flex-direction:column}.closing{padding:65px 28px;margin-bottom:45px}.closing-shape{right:-10px;font-size:100px}.cursor-glow{display:none}.botanical-companion{right:2px;width:54px}.botanical-stem{width:54px}.ladybug{scale:.78}.stem-line{stroke-width:1}.leaf{scale:.78}footer{flex-direction:column;gap:10px}
+  main{padding:0 18px}.nav{height:72px}.links{gap:0}.links a{padding:8px}.links a:first-child,.links a:nth-child(2){display:none}.hero{min-height:650px}.hero-content{padding:35px 0;max-width:100%}h1{font-size:clamp(55px,16vw,76px)}.hero-copy{font-size:18px;margin:25px 0;max-width:360px}.hero-card{width:100px;height:125px;padding:12px;border-radius:18px}.hero-card b{font-size:18px}.card-yellow{right:95px;top:120px}.card-blue{right:-10px;top:335px}.card-white{right:120px;top:450px}.orbit-one{width:390px;height:390px;right:-180px;top:100px}.orbit-two{width:250px;height:250px;right:-95px;top:210px}.scroll-note{bottom:20px}.section{padding:85px 0}.skills-section{padding-top:85px;padding-bottom:85px}.skill{padding:14px 20px;font-size:25px}.posts{grid-template-columns:1fr;gap:18px}.blog-heading{align-items:start;flex-direction:column}.closing{padding:65px 28px;margin-bottom:45px}.closing-shape{right:-10px;font-size:100px}.cursor-glow{display:none}.botanical-companion{right:1px;width:60px}.botanical-stem{width:60px}.ladybug{scale:.78}.stem-line{stroke-width:.95}.leaf{scale:.78}footer{flex-direction:column;gap:10px}
 }
 @media(prefers-reduced-motion:reduce){.botanical-companion *,.botanical-companion{animation:none!important;transition:none!important}.cursor-glow{display:none}}
