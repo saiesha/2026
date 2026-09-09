@@ -70,26 +70,45 @@ export default function Home() {
       html[data-theme="dark"] .theme-toggle:hover { color: #101827; }
       html[data-theme="dark"] .button.primary { color: #10131b; background: #f8f7f2; }
       html[data-theme="dark"] .button.primary:hover { box-shadow: 6px 6px 0 #ab87ff; }
-      html[data-theme="dark"] .closing-links a { border-color: rgba(248,247,242,.55); }
       html[data-theme="dark"] .closing { background: #0b0e15; color: #f8f7f2; }
       html[data-theme="dark"] .closing .eyebrow { color: #f8f7f2; }
-      html[data-theme="dark"] .closing-links a { color: #f8f7f2; }
+      html[data-theme="dark"] .closing-links a { color: #f8f7f2; border-color: rgba(248,247,242,.55); }
+      html[data-theme="dark"] .closing h2 em { color: #b4e1ff; }
+      html[data-theme="dark"] .closing-system { border-color: rgba(180,225,255,.18); background-color: rgba(23,28,40,.42); background-image: linear-gradient(rgba(180,225,255,.06) 1px, transparent 1px), linear-gradient(90deg, rgba(180,225,255,.06) 1px, transparent 1px); }
+      html[data-theme="dark"] .system-line { background: #ab87ff; }
+      html[data-theme="dark"] .system-node { background: #10131b; border-color: #b4e1ff; color: #d9dce3; }
+      html[data-theme="dark"] .system-node:nth-child(2) { border-color: #fface4; }
+      html[data-theme="dark"] .system-node:nth-child(3) { border-color: #c1ff9b; }
+      html[data-theme="dark"] .system-core { background: #b4e1ff; border-color: #10131b; box-shadow: 0 0 0 6px rgba(180,225,255,.1); }
+      html[data-theme="dark"] .system-label { color: #aeb5c2; }
       .closing { background: #f5ffc6; color: #101827; }
-      .closing::before { border-color: rgba(16,24,39,.16); }
+      .closing::before, .closing::after { display:none; }
       .closing .eyebrow { color: #101827; }
       .closing .eyebrow span { border-color: #101827; }
       .closing-links a { color: #101827; border-color: rgba(16,24,39,.55); }
       .closing h2 em { color: #6841d1; }
-      html[data-theme="dark"] .closing h2 em { color: #b4e1ff; }
-      .blog-section { position: relative; isolation: isolate; }
-      .blog-section::before { content: ""; position: absolute; z-index: -1; top: 0; bottom: 0; left: 50%; width: 100vw; transform: translateX(-50%); background: #f1f8ff; }
-      html[data-theme="dark"] .blog-section::before { background: #171c28; }
-      html[data-theme="dark"] h1 .hello { color: #c7b4ff; }
-      h1 .hello { color: #6f48d9; }
-      h1 .name { position: relative; display: inline-block; width: max-content; color: #24324a; }
-      h1 .name::after { left: 0; right: 0; bottom: -7px; height: 8px; transform: rotate(-1.5deg); }
-      html[data-theme="dark"] h1 .name { color: #f8f7f2; }
-      html[data-theme="dark"] h1 .name::after { background: #b4e1ff; }
+      .closing-system { position:absolute; right:52px; top:52px; width:360px; height:250px; border:1px solid rgba(16,24,39,.16); background-color:rgba(255,255,255,.18); background-image:linear-gradient(rgba(16,24,39,.055) 1px, transparent 1px),linear-gradient(90deg,rgba(16,24,39,.055) 1px,transparent 1px); background-size:28px 28px; overflow:hidden; }
+      .system-line { position:absolute; height:1px; background:#6841d1; transform-origin:left center; }
+      .system-line.one { width:108px; left:67px; top:77px; transform:rotate(22deg); }
+      .system-line.two { width:115px; left:175px; top:119px; transform:rotate(-34deg); }
+      .system-line.three { width:96px; left:130px; top:165px; transform:rotate(18deg); }
+      .system-line.four { width:82px; left:86px; top:182px; transform:rotate(-54deg); }
+      .system-core { position:absolute; left:151px; top:105px; width:48px; height:48px; border-radius:50%; background:#6841d1; border:2px solid #f5ffc6; box-shadow:0 0 0 6px rgba(104,65,209,.1); }
+      .system-node { position:absolute; display:flex; align-items:center; justify-content:center; min-width:68px; height:28px; padding:0 10px; background:#fffefa; border:1px solid #6841d1; color:#101827; font-size:8px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; }
+      .system-node:nth-child(2) { left:23px; top:52px; border-color:#6841d1; }
+      .system-node:nth-child(3) { right:20px; top:88px; border-color:#ff7fce; }
+      .system-node:nth-child(4) { left:62px; bottom:22px; border-color:#79c75a; }
+      .system-node:nth-child(5) { right:37px; bottom:42px; border-color:#6841d1; }
+      .system-label { position:absolute; left:18px; bottom:14px; color:#667085; font-size:7px; letter-spacing:.14em; text-transform:uppercase; }
+      .blog-section { position:relative; isolation:isolate; }
+      .blog-section::before { content:""; position:absolute; z-index:-1; top:0; bottom:0; left:50%; width:100vw; transform:translateX(-50%); background:#f1f8ff; }
+      html[data-theme="dark"] .blog-section::before { background:#171c28; }
+      html[data-theme="dark"] h1 .hello { color:#c7b4ff; }
+      h1 .hello { color:#6f48d9; }
+      h1 .name { position:relative; display:inline-block; width:max-content; color:#24324a; }
+      h1 .name::after { left:0; right:0; bottom:-7px; height:8px; transform:rotate(-1.5deg); }
+      html[data-theme="dark"] h1 .name { color:#f8f7f2; }
+      html[data-theme="dark"] h1 .name::after { background:#b4e1ff; }
     `}</style>
     <main>
       <div className="cursor-glow" ref={cursor} />
@@ -129,11 +148,11 @@ export default function Home() {
         <div className="work-showcase reveal"><div className="work-list">{work.map((item,index)=><button className={`work-item ${activeWork===index?"active":""}`} key={item.number} onMouseEnter={()=>setActiveWork(index)} onFocus={()=>setActiveWork(index)} onClick={()=>setActiveWork(index)}><span>{item.number}</span><strong>{item.title}</strong><i>↗</i></button>)}</div><div className={`work-preview preview-${activeWork+1}`}><span className="preview-tag">{work[activeWork].tag}</span><span className="preview-number">{work[activeWork].number}</span><p>{work[activeWork].detail}</p><div className="preview-shape" aria-hidden="true" /></div></div>
       </div></section>
 
-      <section className="section skills-section" id="skills"><div className="section-label reveal">03 <span>/</span> Toolkit</div><div className="skills-intro reveal"><h2>Things I<br /><em>work with.</em></h2><p>Languages, tools, and concepts I keep coming back to.</p></div><div className="skill-list reveal">{skills.map((skill,index)=><div key={skill} className="skill-row"><span>0{index+1}</span><strong>{skill}</strong><i>↗</i></div>)}</div></section>
+      <section className="section skills-section" id="skills"><div className="section-label reveal">03 <span>/</span> Toolkit</div><div className="skills-intro reveal"><h2>Things I<br /><em>work with.</em></h2><p>Languages, tools, and concepts I keep coming back to.</p></div><div className="skill-list reveal">{skills.map((skill,index)=><div key={skill} className="skill-row"><span>0{index+1}</span><strong>{skill}</strong><i>↗</i></div>)}</section>
 
       <section className="section blog-section"><div className="section-label reveal">04 <span>/</span> Writing</div><div className="blog-heading reveal"><div><p className="mini-kicker">Notes & rabbit holes</p><h2>Things I<br /><em>find interesting.</em></h2></div><a className="round-link" href="/blog">All notes <span>↗</span></a></div><div className="posts">{posts.map((post,index)=><a className="post reveal" href={post.href} key={post.title}><span className="post-number">0{index+1}</span><div><p className="date">{post.date}</p><h3>{post.title}</h3><p>{post.excerpt}</p><span className="read">Read post <b>↗</b></span></div></a>)}</div></section>
 
-      <section className="closing reveal"><div className="closing-doodle" aria-hidden="true"><span>✦</span><span>○</span><span>+</span></div><div className="closing-copy"><p className="eyebrow"><span /> 2026</p><h2>That's me,<br /><em>for now.</em></h2><div className="closing-links"><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a><a href="/blog">Writing ↗</a></div></div></section>
+      <section className="closing reveal"><div className="closing-system" aria-hidden="true"><span className="system-node">CODE</span><span className="system-node">LEARN</span><span className="system-node">MAKE</span><span className="system-node">WRITE</span><span className="system-core" /><span className="system-line one" /><span className="system-line two" /><span className="system-line three" /><span className="system-line four" /><span className="system-label">things I'm working on</span></div><div className="closing-copy"><p className="eyebrow"><span /> 2026</p><h2>That's me,<br /><em>for now.</em></h2><div className="closing-links"><a href="https://github.com/saiesha" target="_blank" rel="noreferrer">GitHub ↗</a><a href="/blog">Writing ↗</a></div></div></section>
       <footer><span>Saiesha Chevvakula</span><span>© 2026</span></footer>
     </main>
   </>;
