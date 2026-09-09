@@ -10,9 +10,16 @@ const posts = [
 const skills = ["C++", "Python", "C", "SQL", "DSA", "Systems", "AI"];
 
 function BotanicalCompanion({ progress, flying }) {
-  const positions = [8, 25, 43, 61, 79, 94];
+  const positions = [
+    { y: 9, x: 54 },
+    { y: 24, x: 22 },
+    { y: 39, x: 58 },
+    { y: 55, x: 19 },
+    { y: 71, x: 56 },
+    { y: 87, x: 24 }
+  ];
   const slot = Math.min(positions.length - 1, Math.round(progress * (positions.length - 1)));
-  const y = positions[slot];
+  const target = positions[slot];
   const previous = useRef(slot);
   const [landing, setLanding] = useState(false);
 
@@ -26,9 +33,13 @@ function BotanicalCompanion({ progress, flying }) {
   }, [slot]);
 
   return (
-    <div className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`} style={{ "--bug-y": `${y}%` }} aria-hidden="true">
+    <div
+      className={`botanical-companion ${flying ? "is-flying" : ""} ${landing ? "is-landing" : ""}`}
+      style={{ "--bug-y": `${target.y}%`, "--bug-x": `${target.x}%` }}
+      aria-hidden="true"
+    >
       <svg className="botanical-stem" viewBox="0 0 90 760" preserveAspectRatio="none">
-        <path className="stem-line" d="M47 760 C45 660 53 610 43 530 C34 455 52 400 45 325 C38 245 57 180 44 0" />
+        <path className="stem-line" d="M48 760 C43 690 56 625 45 560 C35 495 55 430 45 365 C36 300 56 235 44 170 C39 105 50 58 45 0" />
         <g className="leaf leaf-1"><path d="M44 665 C25 643 8 650 5 671 C22 682 36 678 44 665Z"/><path d="M42 663L12 669"/></g>
         <g className="leaf leaf-2"><path d="M48 535 C66 512 83 518 86 540 C70 550 57 547 48 535Z"/><path d="M51 534L79 538"/></g>
         <g className="leaf leaf-3"><path d="M43 412 C24 390 9 396 6 416 C21 426 35 424 43 412Z"/><path d="M41 411L13 416"/></g>
@@ -37,24 +48,24 @@ function BotanicalCompanion({ progress, flying }) {
         <g className="leaf leaf-6"><path d="M47 54 C64 32 79 38 82 58 C67 68 55 65 47 54Z"/><path d="M50 53L76 57"/></g>
       </svg>
 
-      <div className="ladybug" style={{ top: `${y}%` }}>
+      <div className="ladybug" style={{ top: "var(--bug-y)", left: "var(--bug-x)" }}>
         <svg viewBox="0 0 52 52" className="ladybug-art">
           <g className="bug-wing bug-wing-left">
-            <path d="M26 12C17 10 10 16 10 26C10 36 17 43 26 42V12Z" fill="#8A203A" />
+            <path d="M25.5 14C18 13 12 18 12 27C12 35 17 40 25.5 41V14Z" fill="#8A203A" />
           </g>
           <g className="bug-wing bug-wing-right">
-            <path d="M26 12C35 10 42 16 42 26C42 36 35 43 26 42V12Z" fill="#8A203A" />
+            <path d="M26.5 14C34 13 40 18 40 27C40 35 35 40 26.5 41V14Z" fill="#8A203A" />
           </g>
-          <path d="M26 12V42" stroke="#4A2730" strokeWidth="1.4" strokeLinecap="round" />
-          <circle cx="17" cy="23" r="2.2" fill="#F4D3DE" opacity=".75" />
-          <circle cx="21" cy="33" r="1.8" fill="#F4D3DE" opacity=".7" />
-          <circle cx="35" cy="23" r="2.2" fill="#F4D3DE" opacity=".75" />
-          <circle cx="31" cy="33" r="1.8" fill="#F4D3DE" opacity=".7" />
-          <ellipse cx="26" cy="12" rx="5.5" ry="4.5" fill="#3A292D" />
-          <path d="M22 10L18 6M30 10L34 6" stroke="#3A292D" strokeWidth="1.2" strokeLinecap="round" />
-          <path d="M20 13L16 12M32 13L36 12" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".8" />
-          <circle cx="24" cy="11" r=".9" fill="#FFF8E8" />
-          <circle cx="28" cy="11" r=".9" fill="#FFF8E8" />
+          <path d="M26 13V41" stroke="#4A2730" strokeWidth="1.2" strokeLinecap="round" />
+          <circle cx="18" cy="23" r="2" fill="#F4D3DE" opacity=".72" />
+          <circle cx="21" cy="33" r="1.6" fill="#F4D3DE" opacity=".68" />
+          <circle cx="34" cy="23" r="2" fill="#F4D3DE" opacity=".72" />
+          <circle cx="31" cy="33" r="1.6" fill="#F4D3DE" opacity=".68" />
+          <ellipse cx="26" cy="12.5" rx="5" ry="4" fill="#3A292D" />
+          <path d="M22 10L18 6M30 10L34 6" stroke="#3A292D" strokeWidth="1.1" strokeLinecap="round" />
+          <path d="M20 13L16 12M32 13L36 12" stroke="#3A292D" strokeWidth="1" strokeLinecap="round" opacity=".75" />
+          <circle cx="24" cy="11.5" r=".8" fill="#FFF8E8" />
+          <circle cx="28" cy="11.5" r=".8" fill="#FFF8E8" />
         </svg>
         <span className="bug-shadow" />
       </div>
