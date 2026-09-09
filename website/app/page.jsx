@@ -71,7 +71,7 @@ export default function Home() {
 
     <section className="work-section" id="work"><div className="work-inner">
       <div className="section-label reveal">02 <span>/</span> Work</div>
-      <div className="work-heading reveal"><div><p className="mini-kicker">What I bring</p><h2>Good work<br /><em>starts with curiosity.</em></h2></div><p className="work-intro">Three small windows into how I work.</p></div>
+      <div className="work-heading reveal"><div><p className="mini-kicker">What I bring</p><h2>Good work<br /><em>starts with curiosity.</em></h2></div><p className="work-intro">A quick look at how I work. Hover or click.</p></div>
       <div className="work-showcase reveal"><div className="work-list">{work.map((item,index)=><button className={`work-item ${activeWork===index?"active":""}`} key={item.number} onMouseEnter={()=>setActiveWork(index)} onFocus={()=>setActiveWork(index)} onClick={()=>setActiveWork(index)}><span>{item.number}</span><strong>{item.title}</strong><i>↗</i></button>)}</div><div className={`work-preview preview-${activeWork+1}`}><span className="preview-tag">{work[activeWork].tag}</span><span className="preview-number">{work[activeWork].number}</span><p>{work[activeWork].detail}</p><div className="preview-shape" aria-hidden="true" /></div></div>
     </div></section>
 
