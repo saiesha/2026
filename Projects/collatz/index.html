@@ -1,53 +1,59 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collatz Linear Explorer</title>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Collatz Linked Lists</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#111b30;--line:#2a3a55;--text:#edf3ff;--muted:#91a3bf;--cyan:#67e8f9;--purple:#b7a0ff;--green:#86efac}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b2d4d,transparent 55%),var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}header{padding:24px clamp(16px,4vw,42px);border-bottom:1px solid var(--line)}h1{margin:0;font-size:clamp(24px,4vw,34px);letter-spacing:-.04em}h1 span{color:var(--cyan)}header p{color:var(--muted);margin:5px 0 0}
-main{max-width:1500px;margin:auto;padding:20px clamp(12px,3vw,32px)}.controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}.field{min-width:140px}.field label{display:block;color:#dce7f8;margin-bottom:5px}.field input{width:100%;background:#091326;border:1px solid #354865;border-radius:8px;padding:10px;color:var(--text)}button{background:#15566b;border:1px solid #267f95;color:white;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer}.hint{color:var(--muted);font-size:12px;margin:12px 2px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:12px 2px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
-.viewport{border:1px solid var(--line);border-radius:14px;background:#0e1729;overflow:auto;min-height:430px}.viewport svg{display:block;min-height:430px}.node rect{fill:#1b2b45;stroke:#4b6b91;stroke-width:1.5}.node.main rect{stroke:var(--cyan);stroke-width:2}.node.branch rect{stroke:var(--purple)}.node text{fill:var(--text);font-weight:750;font-size:14px;text-anchor:middle;dominant-baseline:middle}.edge{fill:none;stroke:#6d89ad;stroke-width:2;opacity:.9}.edge.main{stroke:var(--cyan);stroke-width:2.5}.edge.branch{stroke:var(--purple)}.tag{fill:var(--muted);font-size:11px;text-anchor:middle}.empty{padding:35px;color:var(--muted)}footer{text-align:center;color:#71829d;padding:16px;font-size:12px}
-</style></head><body>
-<header><h1>Collatz <span>Linear Explorer</span></h1><p>A clean, left-to-right number flow. Multiple incoming paths merge into the same node.</p></header>
-<main><section class="controls">
-<div class="field"><label for="start">Starting number</label><input id="start" type="number" min="1" max="100000" value="10"></div>
-<div class="field"><label for="steps">Main path steps</label><input id="steps" type="number" min="3" max="80" value="12"></div>
-<div class="field"><label for="branches">Incoming branch levels</label><input id="branches" type="number" min="0" max="3" value="1"></div>
-<button id="draw">Draw flow</button></section>
-<div class="legend"><span><i class="dot" style="background:#67e8f9"></i>Main Collatz path</span><span><i class="dot" style="background:#b7a0ff"></i>Other numbers feeding into a node</span></div>
-<p class="hint">Example: 10 → 5 → 16 → 8 → 4 → 2 → 1. The node 16 also receives 32 → 16. Scroll horizontally for longer paths.</p>
-<div class="viewport" id="viewport"><div class="empty">Building flow…</div></div></main>
-<footer>Even n → n/2 · Odd n → 3n+1 · Every number has one outgoing arrow; multiple numbers can point to the same next node.</footer>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#111b30;--line:#2a3a55;--text:#edf3ff;--muted:#91a3bf;--accent:#67e8f9;--child:#b7a0ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}
+header{padding:24px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}h1{margin:0;font-size:30px}h1 span{color:var(--accent)}header p{margin:5px 0;color:var(--muted)}
+main{max-width:1100px;margin:auto;padding:22px 16px}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap;padding:15px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+label{display:block;margin-bottom:5px;color:#dce7f8}input{width:150px;padding:10px;background:#091326;border:1px solid #354865;border-radius:8px;color:var(--text)}button{padding:10px 16px;border:0;border-radius:8px;background:#15566b;color:white;font-weight:700;cursor:pointer}
+.note{color:var(--muted);font-size:13px;margin:14px 2px}.list{margin-top:18px;border:1px solid var(--line);border-radius:12px;overflow:hidden}.row{display:grid;grid-template-columns:minmax(90px,1fr) minmax(90px,1fr) minmax(180px,2fr);gap:12px;padding:12px 16px;border-bottom:1px solid var(--line);align-items:center}.row:last-child{border-bottom:0}.head{background:#17243a;color:#aebfd8;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700}.number{font-size:16px;font-weight:800;color:var(--accent)}.children{display:flex;gap:7px;flex-wrap:wrap}.pill{display:inline-block;padding:4px 9px;border:1px solid #65569a;background:#211e3c;color:#e2d9ff;border-radius:7px;font-weight:700}.empty{padding:24px;color:var(--muted)}.indent{display:inline-block;color:var(--muted);font-weight:400;margin-right:5px}
+@media(max-width:600px){.row{grid-template-columns:1fr 1fr;gap:6px}.row .children{grid-column:1/-1}.head{display:none}}
+</style>
+</head>
+<body>
+<header><h1>Collatz <span>Linked Lists</span></h1><p>A shared-node reverse Collatz tree, shown as plain list records — no graph or force layout.</p></header>
+<main>
+<section class="controls">
+<div><label for="root">Root number</label><input id="root" type="number" min="1" max="1000000" value="1"></div>
+<div><label for="levels">Expansion levels</label><input id="levels" type="number" min="1" max="12" value="6"></div>
+<button id="build">Build lists</button>
+</section>
+<p class="note">Each node has one parent and at most two children: 2n, and (n−1)/3 when that is a positive integer. A number is listed only once, even when multiple paths reach it.</p>
+<div class="list" id="list"><div class="empty">Building list…</div></div>
+</main>
 <script>
-const $=id=>document.getElementById(id);
-function next(n){return n%2===0?n/2:3*n+1}
-function draw(){
- const start=Math.max(1,Math.floor(+$('start').value||10)),steps=Math.min(80,Math.max(3,Math.floor(+$('steps').value||12))),levels=Math.min(3,Math.max(0,Math.floor(+$('branches').value||0)));
- const path=[start];while(path.length<steps&&path[path.length-1]!==1)path.push(next(path[path.length-1]));
- const W=170,H=66,gap=95,mainY=250,left=55+levels*(W+gap),top=35,positions=new Map(),nodes=[],edges=[];
- path.forEach((n,i)=>{positions.set(n,{x:left+i*(W+gap),y:mainY,main:true});nodes.push({n,x:left+i*(W+gap),y:mainY,main:true})});
- // Add alternate predecessors to each visible path node. These arrows point into the shared path node.
- let frontier=path.map((n,i)=>({n,depth:0,target:n,targetIndex:i}));
- const seen=new Set(path);
- for(let d=1;d<=levels;d++){
-  const nextFrontier=[];
-  for(const item of frontier){
-   const target=item.n,idx=item.targetIndex;
-   const preds=[target*2,...((target>1&&(target-1)%3===0&&(target-1)/3%2===1)?[(target-1)/3]:[])];
-   let slot=0;
-   for(const p of preds){
-    if(seen.has(p)||p<1)continue;seen.add(p);
-    const x=left+idx*(W+gap)-W-gap*(d-1),y=mainY-d*105-slot*72;
-    nodes.push({n:p,x,y,main:false});edges.push({from:p,to:target,x1:x+W,y1:y+H/2,x2:left+idx*(W+gap),y2:mainY+H/2,branch:true});
-    nextFrontier.push({n:p,depth:d,target:p,targetIndex:idx});slot++;
-   }
-  }
-  frontier=nextFrontier;
- }
- for(let i=0;i<path.length-1;i++)edges.push({from:path[i],to:path[i+1],x1:left+i*(W+gap)+W,y1:mainY+H/2,x2:left+(i+1)*(W+gap),y2:mainY+H/2,main:true});
- const maxX=Math.max(...nodes.map(n=>n.x+W))+55,maxY=mainY+H+60,minY=Math.min(0,...nodes.map(n=>n.y-25)),svgW=Math.max(800,maxX),svgH=maxY-minY;
- let s='<svg xmlns="http://www.w3.org/2000/svg" width="'+svgW+'" height="'+svgH+'" viewBox="0 '+minY+' '+svgW+' '+svgH+'"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6d89ad"/></marker><marker id="arrMain" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#67e8f9"/></marker><marker id="arrBranch" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#b7a0ff"/></marker></defs>';
- for(const e of edges){const mid=(e.x1+e.x2)/2;const d=e.main?'M'+e.x1+','+e.y1+' L'+e.x2+','+e.y2:'M'+e.x1+','+e.y1+' C'+mid+','+e.y1+' '+mid+','+e.y2+' '+e.x2+','+e.y2;s+='<path class="edge '+(e.main?'main':'branch')+'" d="'+d+'" marker-end="url(#'+(e.main?'arrMain':'arrBranch')+')"/>'}
- for(const n of nodes){s+='<g class="node '+(n.main?'main':'branch')+'"><rect x="'+n.x+'" y="'+n.y+'" width="'+W+'" height="'+H+'" rx="12"/><text x="'+(n.x+W/2)+'" y="'+(n.y+H/2)+'">'+n.n+'</text></g>'}
- s+='</svg>';$('viewport').innerHTML=s;
+const el=id=>document.getElementById(id);
+function childrenOf(n){
+ const out=[2*n];
+ const inverse=(n-1)/3;
+ if(Number.isInteger(inverse)&&inverse>0)out.push(inverse);
+ return out;
 }
-$('draw').addEventListener('click',draw);draw();
-</script></body></html>
+function build(){
+ const root=Math.max(1,Math.floor(Number(el('root').value)||1));
+ const levels=Math.min(12,Math.max(1,Math.floor(Number(el('levels').value)||1)));
+ const records=[{n:root,parent:null,depth:0}],byNumber=new Map([[root,records[0]]]);
+ for(let i=0;i<records.length;i++){
+  const node=records[i];if(node.depth>=levels)continue;
+  node.children=[];
+  for(const child of childrenOf(node.n)){
+   if(byNumber.has(child))continue;
+   const rec={n:child,parent:node.n,depth:node.depth+1};
+   byNumber.set(child,rec);records.push(rec);node.children.push(child);
+  }
+ }
+ const sorted=records;
+ let out='<div class="row head"><div>Number</div><div>Parent</div><div>Children (max 2)</div></div>';
+ for(const r of sorted){
+  const indent='— '.repeat(r.depth);
+  const kids=r.children||[];
+  out+='<div class="row"><div class="number"><span class="indent">'+indent+'</span>'+r.n+'</div><div>'+(r.parent===null?'—':r.parent)+'</div><div class="children">'+(kids.length?kids.map(n=>'<span class="pill">'+n+'</span>').join(''):'<span style="color:var(--muted)">Not expanded</span>')+'</div></div>';
+ }
+ el('list').innerHTML=out;
+}
+el('build').addEventListener('click',build);build();
+</script>
+</body></html>
