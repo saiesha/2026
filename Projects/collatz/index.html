@@ -29,16 +29,41 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 <script>
 const el=id=>document.getElementById(id);
 const PAGE_SIZE=100;
-let allRows=[],currentPage=1,buildToken=0;
-function getChain(start){
- const chain=[start];let n=start;const seen=new Set([start]);
- while(n!==1){
-  n=n%2===0?n/2:3*n+1;
-  if(!Number.isSafeInteger(n)||seen.has(n))return {chain,reaches:false};
-  seen.add(n);chain.push(n);
-  if(chain.length>1000000)throw new Error('Sequence limit exceeded for '+start);
+let allRows=[],currentPage=1,buildToken=0,longestStart=1;
+let cache=new Map();
+function calculate(start){
+ if(cache.has(start))return cache.get(start);
+ const path=[],seen=new Set();let n=start,base;
+ while(!cache.has(n)&&!seen.has(n)){
+  seen.add(n);path.push(n);
+  const next=n%2===0?n/2:3*n+1;
+  if(!Number.isSafeInteger(next)){
+   // Values beyond JavaScript's exact integer range are not evaluated inaccurately.
+   base={reaches:false,steps:null};break;
+  }
+  n=next;
  }
- return {chain,reaches:true};
+ if(!base){
+  if(cache.has(n))base=cache.get(n);
+  else base={reaches:false,steps:null}; // A cycle was encountered.
+ }
+ for(let i=path.length-1;i>=0;i--){
+  const value=path[i],next=value%2===0?value/2:3*value+1;
+  base={reaches:base.reaches,steps:base.reaches?base.steps+1:null};
+  cache.set(value,{...base,next});
+ }
+ return cache.get(start);
+}
+function getChain(start){
+ const chain=[start],seen=new Set();let n=start;
+ while(n!==1&&cache.has(n)){
+  if(seen.has(n))break;
+  seen.add(n);
+  const entry=cache.get(n);
+  if(entry.next===undefined||entry.next===null)break;
+  n=entry.next;chain.push(n);
+ }
+ return chain;
 }
 function renderPage(){
  const totalPages=Math.max(1,Math.ceil(allRows.length/PAGE_SIZE));
@@ -46,8 +71,8 @@ function renderPage(){
  const first=(currentPage-1)*PAGE_SIZE,last=Math.min(first+PAGE_SIZE,allRows.length);
  let out='<div class="row head"><div>Start</div><div>Reaches 1?</div><div>Steps</div><div>Collatz chain</div></div>';
  for(let i=first;i<last;i++){
-  const r=allRows[i],chain=getChain(r.start).chain;
-  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+r.steps.toLocaleString()+'</div><div class="chain">'+chain.join(' → ')+'</div></div>';
+  const r=allRows[i],chain=getChain(r.start);
+  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+(r.steps===null?'—':r.steps.toLocaleString())+'</div><div class="chain">'+chain.join(' → ')+(r.reaches?'':' (sequence stopped)')+'</div></div>';
  }
  el('results').innerHTML=out;
  const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+(first+1).toLocaleString()+'–'+last.toLocaleString()+' of '+allRows.length.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
@@ -56,32 +81,32 @@ function renderPage(){
   el(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{currentPage=Number(b.dataset.page);renderPage();}));
  }
 }
-let longestStart=1;
 async function build(){
- const token=++buildToken;
- const raw=Number(el('max').value);
+ const token=++buildToken,raw=Number(el('max').value);
  if(!Number.isFinite(raw)||raw<1){el('max').value=1;return;}
  const limit=Math.min(1000000,Math.floor(raw));
- el('max').value=limit;
- el('build').disabled=true;
+ el('max').value=limit;el('build').disabled=true;
  el('stats').innerHTML='<div class="stat">Calculating 1–'+limit.toLocaleString()+'…</div>';
- el('results').innerHTML='<div style="padding:20px;color:var(--muted)">Calculating chains…</div>';
- allRows=[];let longestSteps=-1;longestStart=1;
+ el('results').innerHTML='<div style="padding:20px;color:var(--muted)">Calculating with cached results…</div>';
+ cache=new Map([[1,{reaches:true,steps:0,next:null}]]);
+ allRows=[];let longestSteps=-1,longestStartLocal=1,reached=0;
  for(let start=1;start<=limit;start++){
   if(token!==buildToken)return;
-  const result=getChain(start),steps=result.chain.length-1;
-  allRows.push({start,steps,reaches:result.reaches});
-  if(steps>longestSteps){longestSteps=steps;longestStart=start;}
-  if(start%250===0||start===limit){
-   el('stats').innerHTML='<div class="stat">Calculating: <strong>'+start.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>';
+  const result=calculate(start);
+  allRows.push({start,steps:result.steps,reaches:result.reaches});
+  if(result.reaches)reached++;
+  if(result.reaches&&result.steps>longestSteps){longestSteps=result.steps;longestStartLocal=start;}
+  if(start%1000===0||start===limit){
+   el('stats').innerHTML='<div class="stat">Calculating: <strong>'+start.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div><div class="stat">Cached values: <strong>'+cache.size.toLocaleString()+'</strong></div>';
    await new Promise(resolve=>setTimeout(resolve,0));
   }
  }
- const reached=allRows.filter(r=>r.reaches).length;
+ longestStart=longestStartLocal;
  el('stats').innerHTML=
   '<div class="stat">Starting numbers checked: <strong>1–'+limit.toLocaleString()+'</strong></div>'+
   '<div class="stat">Reached 1: <strong>'+reached.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>'+
-  '<div class="stat">Longest chain: <strong>'+longestSteps.toLocaleString()+' steps</strong> (starts at '+longestStart.toLocaleString()+')</div>';
+  '<div class="stat">Longest chain: <strong>'+Math.max(0,longestSteps).toLocaleString()+' steps</strong> (starts at '+longestStart.toLocaleString()+')</div>'+
+  '<div class="stat">Memoized results: <strong>'+cache.size.toLocaleString()+'</strong></div>';
  currentPage=1;renderPage();el('build').disabled=false;
 }
 el('build').addEventListener('click',build);
