@@ -22,7 +22,7 @@ function next(n){return n%2===0?n/2:3*n+1}
 function draw(){
  const start=Math.max(1,Math.floor(+$('start').value||10)),steps=Math.min(80,Math.max(3,Math.floor(+$('steps').value||12))),levels=Math.min(3,Math.max(0,Math.floor(+$('branches').value||0)));
  const path=[start];while(path.length<steps&&path[path.length-1]!==1)path.push(next(path[path.length-1]));
- const W=170,H=66,gap=95,mainY=250,left=55,top=35,positions=new Map(),nodes=[],edges=[];
+ const W=170,H=66,gap=95,mainY=250,left=55+levels*(W+gap),top=35,positions=new Map(),nodes=[],edges=[];
  path.forEach((n,i)=>{positions.set(n,{x:left+i*(W+gap),y:mainY,main:true});nodes.push({n,x:left+i*(W+gap),y:mainY,main:true})});
  // Add alternate predecessors to each visible path node. These arrows point into the shared path node.
  let frontier=path.map((n,i)=>({n,depth:0,target:n,targetIndex:i}));
