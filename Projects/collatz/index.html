@@ -46,8 +46,8 @@ function renderPage(){
  const first=(currentPage-1)*PAGE_SIZE,last=Math.min(first+PAGE_SIZE,allRows.length);
  let out='<div class="row head"><div>Start</div><div>Reaches 1?</div><div>Steps</div><div>Collatz chain</div></div>';
  for(let i=first;i<last;i++){
-  const r=allRows[i];
-  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+r.steps.toLocaleString()+'</div><div class="chain">'+r.chain.join(' → ')+'</div></div>';
+  const r=allRows[i],chain=getChain(r.start).chain;
+  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+r.steps.toLocaleString()+'</div><div class="chain">'+chain.join(' → ')+'</div></div>';
  }
  el('results').innerHTML=out;
  const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+(first+1).toLocaleString()+'–'+last.toLocaleString()+' of '+allRows.length.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
@@ -70,7 +70,7 @@ async function build(){
  for(let start=1;start<=limit;start++){
   if(token!==buildToken)return;
   const result=getChain(start),steps=result.chain.length-1;
-  allRows.push({start,steps,reaches:result.reaches,chain:result.chain});
+  allRows.push({start,steps,reaches:result.reaches});
   if(steps>longestSteps){longestSteps=steps;longestStart=start;}
   if(start%250===0||start===limit){
    el('stats').innerHTML='<div class="stat">Calculating: <strong>'+start.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>';
