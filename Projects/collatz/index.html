@@ -1,115 +1,53 @@
 <!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Collatz Graph Explorer</title>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Collatz Linear Explorer</title>
 <style>
-:root{color-scheme:dark;--bg:#0b1020;--panel:#111a2e;--line:#26344f;--muted:#91a0ba;--text:#edf3ff;--cyan:#67e8f9;--violet:#a78bfa;--green:#86efac}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -15%,#1b2d50 0,transparent 55%),var(--bg);color:var(--text);font:14px/1.5 Inter,ui-sans-serif,system-ui,sans-serif}
-header{padding:26px 28px 18px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;gap:18px;flex-wrap:wrap}
-h1{font-size:clamp(22px,3vw,30px);letter-spacing:-.04em;margin:0}h1 span{color:var(--cyan)}.sub{color:var(--muted);margin:5px 0 0}
-main{display:grid;grid-template-columns:300px minmax(0,1fr);gap:16px;padding:16px;max-width:1600px;margin:auto}
-.panel,.stage{background:rgba(17,26,46,.92);border:1px solid var(--line);border-radius:16px}
-.panel{padding:18px;height:max-content}.panel h2{font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:#b8c8e5;margin:0 0 16px}
-.control{margin:16px 0}.control label{display:flex;justify-content:space-between;color:#dce7fa;margin-bottom:7px}.control output{color:var(--cyan);font-variant-numeric:tabular-nums}
-input[type=range]{width:100%;accent-color:#67e8f9}input[type=number]{width:100%;background:#0b1326;border:1px solid #344563;border-radius:8px;padding:9px;color:var(--text)}
-.check{display:flex;align-items:center;gap:9px;color:#c4d1e7;margin:13px 0}.check input{accent-color:#67e8f9}
-button{border:1px solid #3b5275;background:#1a2a46;color:var(--text);border-radius:9px;padding:9px 12px;cursor:pointer;font-weight:600}button:hover{border-color:var(--cyan);background:#203858}.primary{background:#15566b;border-color:#267f95}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
-.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin-top:18px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:6px}
-.note{font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin-top:18px}
-.stage{min-height:650px;position:relative;overflow:hidden}.toolbar{position:absolute;z-index:2;top:14px;left:14px;right:14px;display:flex;justify-content:space-between;gap:10px;pointer-events:none}.toolbar>*{pointer-events:auto}.stats{display:flex;gap:8px;flex-wrap:wrap}.stat{background:#0b1326dd;border:1px solid #2a3a56;padding:7px 10px;border-radius:9px;color:var(--muted);font-size:12px}.stat b{color:var(--text);font-variant-numeric:tabular-nums}
-#graph{width:100%;height:650px;display:block;touch-action:none}.empty{position:absolute;inset:0;display:grid;place-items:center;color:var(--muted);pointer-events:none}
-.node circle{stroke:#d6e9ff;stroke-width:1.5;cursor:grab}.node text{fill:#edf3ff;font-size:11px;text-anchor:middle;dominant-baseline:central;pointer-events:none;font-weight:700}.node.selected circle{stroke:#fff;stroke-width:3;filter:drop-shadow(0 0 8px #67e8f9)}
-.link{fill:none;stroke-width:1.6;opacity:.65}.link.double{stroke:#67e8f9}.link.inverse{stroke:#a78bfa;stroke-dasharray:5 4}
-.tip{position:absolute;display:none;z-index:3;background:#07101f;border:1px solid #405777;border-radius:9px;padding:8px 11px;pointer-events:none;color:#eaf3ff;font-size:12px;box-shadow:0 8px 30px #0008}
-.details{margin-top:12px;padding:12px;border:1px solid var(--line);border-radius:10px;background:#0b1326;color:var(--muted);font-size:12px;min-height:58px}.details b{color:var(--cyan)}
-footer{text-align:center;color:#6f809d;font-size:11px;padding:0 16px 20px}
-@media(max-width:850px){main{grid-template-columns:1fr}.stage{min-height:520px}#graph{height:520px}.panel{order:1}.stage{order:2}}
-</style>
-</head>
-<body>
-<header><div><h1>Collatz <span>Graph Explorer</span></h1><p class="sub">Every positive integer follows its Collatz path toward the 1 → 4 → 2 → 1 cycle.</p></div><div class="stats"><div class="stat">Start node <b>1</b></div><div class="stat">Rule <b>n/2 or 3n+1</b></div></div></header>
-<main>
-<aside class="panel">
-<h2>Graph controls</h2>
-<div class="control"><label for="maxValue">Largest starting number <output id="maxOut">100</output></label><input id="maxValue" type="range" min="10" max="500" step="10" value="100"></div>
-<div class="control"><label for="depth">Maximum steps per path <output id="depthOut">250</output></label><input id="depth" type="range" min="20" max="500" step="10" value="250"></div>
-<div class="control"><label for="maxNodes">Graph node limit <output id="nodesOut">2000</output></label><input id="maxNodes" type="range" min="100" max="10000" step="100" value="2000"></div>
-<label class="check"><input id="showLabels" type="checkbox" checked> Show node labels</label>
-<label class="check"><input id="onlyCycle" type="checkbox"> Highlight the 1 → 4 → 2 → 1 cycle</label>
-<div class="actions"><button class="primary" id="build">Build graph</button><button id="reset">Reset view</button></div>
-<div class="details" id="details">Select a node to inspect its outgoing connections.</div>
-<div class="legend"><span><i class="dot" style="background:#67e8f9"></i>Even: n → n/2</span><span><i class="dot" style="background:#a78bfa"></i>Odd: n → 3n+1</span><span><i class="dot" style="background:#86efac"></i>Start node</span></div>
-<div class="note"><b>Collatz rules</b><br>For every starting number from 1 to N: if n is even, draw n → n/2; if n is odd, draw n → 3n+1. Continue until 1 or the step limit. Shared numbers are shown once, so paths merge into the same directed graph.</div>
-</aside>
-<section class="stage">
-<div class="toolbar"><div class="stats" id="stats"><div class="stat">Building graph…</div></div><div class="actions" style="margin:0"><button id="zoomIn" aria-label="Zoom in">+</button><button id="zoomOut" aria-label="Zoom out">−</button></div></div>
-<svg id="graph" role="img" aria-label="Interactive directed graph of positive integers"></svg><div class="tip" id="tip"></div>
-</section>
-</main>
-<footer>Drag nodes · Scroll to zoom · Drag the background to pan · Select a node for its next Collatz step</footer>
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+:root{color-scheme:dark;--bg:#0b1020;--panel:#111b30;--line:#2a3a55;--text:#edf3ff;--muted:#91a3bf;--cyan:#67e8f9;--purple:#b7a0ff;--green:#86efac}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 50% -20%,#1b2d4d,transparent 55%),var(--bg);color:var(--text);font:14px/1.5 system-ui,sans-serif}header{padding:24px clamp(16px,4vw,42px);border-bottom:1px solid var(--line)}h1{margin:0;font-size:clamp(24px,4vw,34px);letter-spacing:-.04em}h1 span{color:var(--cyan)}header p{color:var(--muted);margin:5px 0 0}
+main{max-width:1500px;margin:auto;padding:20px clamp(12px,3vw,32px)}.controls{display:flex;align-items:end;gap:14px;flex-wrap:wrap;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px}.field{min-width:140px}.field label{display:block;color:#dce7f8;margin-bottom:5px}.field input{width:100%;background:#091326;border:1px solid #354865;border-radius:8px;padding:10px;color:var(--text)}button{background:#15566b;border:1px solid #267f95;color:white;border-radius:8px;padding:10px 15px;font-weight:700;cursor:pointer}.hint{color:var(--muted);font-size:12px;margin:12px 2px}.legend{display:flex;gap:14px;flex-wrap:wrap;color:var(--muted);font-size:12px;margin:12px 2px}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px}
+.viewport{border:1px solid var(--line);border-radius:14px;background:#0e1729;overflow:auto;min-height:430px}.viewport svg{display:block;min-height:430px}.node rect{fill:#1b2b45;stroke:#4b6b91;stroke-width:1.5}.node.main rect{stroke:var(--cyan);stroke-width:2}.node.branch rect{stroke:var(--purple)}.node text{fill:var(--text);font-weight:750;font-size:14px;text-anchor:middle;dominant-baseline:middle}.edge{fill:none;stroke:#6d89ad;stroke-width:2;opacity:.9}.edge.main{stroke:var(--cyan);stroke-width:2.5}.edge.branch{stroke:var(--purple)}.tag{fill:var(--muted);font-size:11px;text-anchor:middle}.empty{padding:35px;color:var(--muted)}footer{text-align:center;color:#71829d;padding:16px;font-size:12px}
+</style></head><body>
+<header><h1>Collatz <span>Linear Explorer</span></h1><p>A clean, left-to-right number flow. Multiple incoming paths merge into the same node.</p></header>
+<main><section class="controls">
+<div class="field"><label for="start">Starting number</label><input id="start" type="number" min="1" max="100000" value="10"></div>
+<div class="field"><label for="steps">Main path steps</label><input id="steps" type="number" min="3" max="80" value="12"></div>
+<div class="field"><label for="branches">Incoming branch levels</label><input id="branches" type="number" min="0" max="3" value="1"></div>
+<button id="draw">Draw flow</button></section>
+<div class="legend"><span><i class="dot" style="background:#67e8f9"></i>Main Collatz path</span><span><i class="dot" style="background:#b7a0ff"></i>Other numbers feeding into a node</span></div>
+<p class="hint">Example: 10 → 5 → 16 → 8 → 4 → 2 → 1. The node 16 also receives 32 → 16. Scroll horizontally for longer paths.</p>
+<div class="viewport" id="viewport"><div class="empty">Building flow…</div></div></main>
+<footer>Even n → n/2 · Odd n → 3n+1 · Every number has one outgoing arrow; multiple numbers can point to the same next node.</footer>
 <script>
-const svg=d3.select("#graph"), width=()=>document.querySelector(".stage").clientWidth, height=()=>document.querySelector(".stage").clientHeight;
-const tip=document.getElementById("tip"), details=document.getElementById("details");
-let simulation, zoomBehavior, currentNodes=[],currentLinks=[],selected=null;
-function buildGraph(){
- const maxStart=+document.getElementById("maxValue").value, maxSteps=+document.getElementById("depth").value, cap=+document.getElementById("maxNodes").value;
- const nodes=new Map(), links=new Map(); let truncated=false, longest=0;
- // Generate a complete forward Collatz trajectory for every starting integer.
- for(let seed=1;seed<=maxStart;seed++){
-  let n=seed, step=0;
-  while(step<=maxSteps){
-   if(!nodes.has(n)){
-    if(nodes.size>=cap){truncated=true;break;}
-    nodes.set(n,{id:n});
-   }
-   const next=n===1?4:(n%2===0?n/2:3*n+1);
-   if(!nodes.has(next)&&nodes.size>=cap){truncated=true;break;}
-   links.set(n+"->"+next,{source:n,target:next,type:"forward",odd:n%2!==0});
-   if(n===1)break;
-   n=next;step++;
-  }
-  longest=Math.max(longest,step);
-  if(truncated)break;
- }
- currentNodes=[...nodes.values()];
- currentLinks=[...links.values()].filter(l=>nodes.has(l.source)&&nodes.has(l.target));
- draw();
- document.getElementById("stats").innerHTML='<div class="stat">Nodes <b>'+currentNodes.length+'</b></div><div class="stat">Directed edges <b>'+currentLinks.length+'</b></div><div class="stat">Starting values <b>1–'+Math.min(maxStart, truncated?maxStart: maxStart)+'</b></div>'+(truncated?'<div class="stat">Node limit reached</div>':'<div class="stat">Paths complete</div>');
-}
+const $=id=>document.getElementById(id);
+function next(n){return n%2===0?n/2:3*n+1}
 function draw(){
- if(simulation)simulation.stop();
- svg.selectAll("*").remove();const w=width(),h=height();svg.attr("viewBox","0 0 "+w+" "+h);
- const defs=svg.append("defs");
- defs.append("marker").attr("id","arrow-forward").attr("viewBox","0 -5 10 10").attr("refX",22).attr("refY",0).attr("markerWidth",5).attr("markerHeight",5).attr("orient","auto").append("path").attr("d","M0,-5L10,0L0,5").attr("fill","#67e8f9");
- const root=svg.append("g");
- zoomBehavior=d3.zoom().scaleExtent([.12,5]).on("zoom",e=>root.attr("transform",e.transform));svg.call(zoomBehavior);
- const link=root.append("g").selectAll("path").data(currentLinks).join("path").attr("class","link forward").attr("stroke",d=>d.odd?"#a78bfa":"#67e8f9").attr("marker-end","url(#arrow-forward)");
- const node=root.append("g").selectAll("g").data(currentNodes).join("g").attr("class","node").call(d3.drag().on("start",(e,d)=>{if(!e.active)simulation.alphaTarget(.25).restart();d.fx=d.x;d.fy=d.y}).on("drag",(e,d)=>{d.fx=e.x;d.fy=e.y}).on("end",(e,d)=>{if(!e.active)simulation.alphaTarget(0);d.fx=null;d.fy=null}));
- node.append("circle").attr("r",d=>d.id===1?17:Math.max(8,15-Math.log10(d.id+1)*2)).attr("fill",d=>d.id===1?"#86efac":"#4d86bb");
- node.append("text").text(d=>d.id).style("display",document.getElementById("showLabels").checked?"":"none");
- node.on("click",(e,d)=>{e.stopPropagation();selected=d.id;node.classed("selected",n=>n.id===selected);const next=d.id===1?4:(d.id%2===0?d.id/2:3*d.id+1);details.innerHTML='<b>Node '+d.id+'</b><br>Next step: '+d.id+' → '+next+(nodesHas(next)?'':' (outside current graph limit)');});
- function nodesHas(id){return currentNodes.some(n=>n.id===id)}
- node.on("pointerenter",(e,d)=>{tip.style.display="block";tip.textContent="Start "+d.id+" · next "+(d.id%2===0?d.id/2:3*d.id+1)}).on("pointermove",e=>{const r=document.querySelector(".stage").getBoundingClientRect();tip.style.left=(e.clientX-r.left+12)+"px";tip.style.top=(e.clientY-r.top+12)+"px"}).on("pointerleave",()=>tip.style.display="none");
- svg.on("click",()=>{selected=null;node.classed("selected",false);details.textContent="Select a node to inspect its next Collatz step."});
- simulation=d3.forceSimulation(currentNodes).force("link",d3.forceLink(currentLinks).id(d=>d.id).distance(48).strength(.8)).force("charge",d3.forceManyBody().strength(-95)).force("center",d3.forceCenter(w/2,h/2)).force("collide",d3.forceCollide().radius(19)).on("tick",()=>{
-  link.attr("d",d=>{const sx=d.source.x,sy=d.source.y,tx=d.target.x,ty=d.target.y,dx=tx-sx,dy=ty-sy,dr=Math.max(25,Math.sqrt(dx*dx+dy*dy)*1.15);return "M"+sx+","+sy+"A"+dr+","+dr+" 0 0,1 "+tx+","+ty});
-  node.attr("transform",d=>"translate("+d.x+","+d.y+")");
- });
- if(document.getElementById("onlyCycle").checked){
-  link.style("opacity",d=>[1,2,4].includes(+d.source.id)&&[1,2,4].includes(+d.target.id)?1:.035).style("stroke-width",d=>[1,2,4].includes(+d.source.id)&&[1,2,4].includes(+d.target.id)?3:1);
-  node.select("circle").attr("opacity",d=>[1,2,4].includes(d.id)?1:.16);
+ const start=Math.max(1,Math.floor(+$('start').value||10)),steps=Math.min(80,Math.max(3,Math.floor(+$('steps').value||12))),levels=Math.min(3,Math.max(0,Math.floor(+$('branches').value||0)));
+ const path=[start];while(path.length<steps&&path[path.length-1]!==1)path.push(next(path[path.length-1]));
+ const W=170,H=66,gap=95,mainY=250,left=55,top=35,positions=new Map(),nodes=[],edges=[];
+ path.forEach((n,i)=>{positions.set(n,{x:left+i*(W+gap),y:mainY,main:true});nodes.push({n,x:left+i*(W+gap),y:mainY,main:true})});
+ // Add alternate predecessors to each visible path node. These arrows point into the shared path node.
+ let frontier=path.map((n,i)=>({n,depth:0,target:n,targetIndex:i}));
+ const seen=new Set(path);
+ for(let d=1;d<=levels;d++){
+  const nextFrontier=[];
+  for(const item of frontier){
+   const target=item.n,idx=item.targetIndex;
+   const preds=[target*2,...((target>1&&(target-1)%3===0&&(target-1)/3%2===1)?[(target-1)/3]:[])];
+   let slot=0;
+   for(const p of preds){
+    if(seen.has(p)||p<1)continue;seen.add(p);
+    const x=left+idx*(W+gap)-W-gap*(d-1),y=mainY-d*105-slot*72;
+    nodes.push({n:p,x,y,main:false});edges.push({from:p,to:target,x1:x+W,y1:y+H/2,x2:left+idx*(W+gap),y2:mainY+H/2,branch:true});
+    nextFrontier.push({n:p,depth:d,target:p,targetIndex:idx});slot++;
+   }
+  }
+  frontier=nextFrontier;
  }
+ for(let i=0;i<path.length-1;i++)edges.push({from:path[i],to:path[i+1],x1:left+i*(W+gap)+W,y1:mainY+H/2,x2:left+(i+1)*(W+gap),y2:mainY+H/2,main:true});
+ const maxX=Math.max(...nodes.map(n=>n.x+W))+55,maxY=mainY+H+60,minY=Math.min(0,...nodes.map(n=>n.y-25)),svgW=Math.max(800,maxX),svgH=maxY-minY;
+ let s='<svg xmlns="http://www.w3.org/2000/svg" width="'+svgW+'" height="'+svgH+'" viewBox="0 '+minY+' '+svgW+' '+svgH+'"><defs><marker id="arr" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#6d89ad"/></marker><marker id="arrMain" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#67e8f9"/></marker><marker id="arrBranch" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#b7a0ff"/></marker></defs>';
+ for(const e of edges){const mid=(e.x1+e.x2)/2;const d=e.main?'M'+e.x1+','+e.y1+' L'+e.x2+','+e.y2:'M'+e.x1+','+e.y1+' C'+mid+','+e.y1+' '+mid+','+e.y2+' '+e.x2+','+e.y2;s+='<path class="edge '+(e.main?'main':'branch')+'" d="'+d+'" marker-end="url(#'+(e.main?'arrMain':'arrBranch')+')"/>'}
+ for(const n of nodes){s+='<g class="node '+(n.main?'main':'branch')+'"><rect x="'+n.x+'" y="'+n.y+'" width="'+W+'" height="'+H+'" rx="12"/><text x="'+(n.x+W/2)+'" y="'+(n.y+H/2)+'">'+n.n+'</text></g>'}
+ s+='</svg>';$('viewport').innerHTML=s;
 }
-document.getElementById("build").onclick=buildGraph;
-document.getElementById("reset").onclick=()=>svg.transition().duration(350).call(zoomBehavior.transform,d3.zoomIdentity);
-document.getElementById("zoomIn").onclick=()=>svg.transition().call(zoomBehavior.scaleBy,1.25);
-document.getElementById("zoomOut").onclick=()=>svg.transition().call(zoomBehavior.scaleBy,.8);
-["maxValue","depth","maxNodes"].forEach(id=>document.getElementById(id).addEventListener("input",e=>{document.getElementById(({maxValue:"maxOut",depth:"depthOut",maxNodes:"nodesOut"})[id]).textContent=e.target.value}));
-document.getElementById("showLabels").onchange=()=>draw();
-document.getElementById("onlyCycle").onchange=()=>draw();
-window.addEventListener("resize",()=>draw());buildGraph();
-</script>
-</body></html>
+$('draw').addEventListener('click',draw);draw();
+</script></body></html>
