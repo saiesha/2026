@@ -65,10 +65,10 @@ function buildGraph(){
     if(nodes.size>=cap){truncated=true;break;}
     nodes.set(n,{id:n});
    }
-   if(n===1)break;
-   const next=n%2===0?n/2:3*n+1;
+   const next=n===1?4:(n%2===0?n/2:3*n+1);
    if(!nodes.has(next)&&nodes.size>=cap){truncated=true;break;}
    links.set(n+"->"+next,{source:n,target:next,type:"forward",odd:n%2!==0});
+   if(n===1)break;
    n=next;step++;
   }
   longest=Math.max(longest,step);
