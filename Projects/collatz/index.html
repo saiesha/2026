@@ -10,7 +10,7 @@ header{padding:24px clamp(16px,4vw,40px);border-bottom:1px solid var(--line)}h1{
 main{max-width:1200px;margin:auto;padding:22px 16px}.controls{display:flex;gap:12px;align-items:end;flex-wrap:wrap;padding:15px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
 label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10px;background:#091326;border:1px solid #354865;border-radius:8px;color:var(--text)}button{padding:10px 16px;border:0;border-radius:8px;background:#15566b;color:white;font-weight:700;cursor:pointer}
 .note{color:var(--muted);font-size:13px;margin:14px 2px}.stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.stat{padding:9px 12px;background:var(--panel);border:1px solid var(--line);border-radius:9px;color:var(--muted)}.stat strong{color:var(--text)}
-.table-wrap{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:auto}.row{display:grid;grid-template-columns:90px 110px 90px minmax(300px,1fr);gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:start}.row:last-child{border-bottom:0}.head{position:sticky;top:0;background:#17243a;color:#aebfd8;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;z-index:1}.number{font-size:15px;font-weight:800;color:var(--accent)}.yes{color:var(--green);font-weight:700}.steps{font-variant-numeric:tabular-nums}.chain{overflow-wrap:anywhere;color:#d5def0}.highlight{background:#28243a}.highlight .number,.highlight .steps{color:var(--gold)}.legend{color:var(--muted);font-size:12px;margin-top:10px}
+.table-wrap{margin-top:14px;border:1px solid var(--line);border-radius:12px;overflow:auto}.row{display:grid;grid-template-columns:90px 110px 90px minmax(300px,1fr);gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);align-items:start}.row:last-child{border-bottom:0}.head{position:sticky;top:0;background:#17243a;color:#aebfd8;font-size:12px;text-transform:uppercase;letter-spacing:.06em;font-weight:700;z-index:1}.number{font-size:15px;font-weight:800;color:var(--accent)}.yes{color:var(--green);font-weight:700}.steps{font-variant-numeric:tabular-nums}.chain{overflow-wrap:anywhere;color:#d5def0}.highlight{background:#28243a}.highlight .number,.highlight .steps{color:var(--gold)}.legend{color:var(--muted);font-size:12px;margin-top:10px}.pagination{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}.pagination button:disabled{opacity:.4;cursor:not-allowed}.pagination span{color:var(--muted)}
 @media(max-width:700px){.row{grid-template-columns:60px 70px 55px minmax(230px,1fr);gap:8px;padding:9px 10px;font-size:12px}.head{font-size:10px}}
 </style>
 </head>
@@ -18,43 +18,71 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 <header><h1>Collatz <span>Chain Explorer</span></h1><p>Test every starting number and inspect the complete sequence until it reaches 1.</p></header>
 <main>
 <section class="controls">
-<div><label for="max">Check starting numbers from 1 to</label><input id="max" type="number" min="1" max="10000" value="100"></div>
+<div><label for="max">Check starting numbers from 1 to</label><input id="max" type="number" min="1" max="1000000" value="100"></div>
 <button id="build">Generate chains</button>
 </section>
 <p class="note">Rule: if n is even, the next number is n ÷ 2. If n is odd, the next number is 3n + 1. The step count is the number of transitions needed to reach 1.</p>
 <div class="stats" id="stats"></div>
-<div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div>
+<div class="pagination" id="pagination"></div><div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div><div class="pagination" id="paginationBottom"></div>
 <div class="legend">The highlighted row is the starting number with the longest chain in this range.</div>
 </main>
 <script>
 const el=id=>document.getElementById(id);
+const PAGE_SIZE=100;
+let allRows=[],currentPage=1,buildToken=0;
 function getChain(start){
  const chain=[start];let n=start;const seen=new Set([start]);
  while(n!==1){
   n=n%2===0?n/2:3*n+1;
-  if(seen.has(n))return {chain,reaches:false};
+  if(!Number.isSafeInteger(n)||seen.has(n))return {chain,reaches:false};
   seen.add(n);chain.push(n);
   if(chain.length>1000000)throw new Error('Sequence limit exceeded for '+start);
  }
  return {chain,reaches:true};
 }
-function build(){
- const limit=Math.max(1,Math.min(10000,Math.floor(Number(el('max').value)||100)));
- const rows=[];let longest={start:1,steps:0};
- for(let start=1;start<=limit;start++){
-  const result=getChain(start),steps=result.chain.length-1;
-  rows.push({start,steps,reaches:result.reaches,chain:result.chain});
-  if(steps>longest.steps)longest={start,steps};
- }
- el('stats').innerHTML=
-  '<div class="stat">Starting numbers checked: <strong>1–'+limit.toLocaleString()+'</strong></div>'+
-  '<div class="stat">All reached 1: <strong>'+rows.filter(r=>r.reaches).length.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>'+
-  '<div class="stat">Longest chain: <strong>'+longest.steps+' steps</strong> (starts at '+longest.start+')</div>';
+function renderPage(){
+ const totalPages=Math.max(1,Math.ceil(allRows.length/PAGE_SIZE));
+ currentPage=Math.min(Math.max(1,currentPage),totalPages);
+ const first=(currentPage-1)*PAGE_SIZE,last=Math.min(first+PAGE_SIZE,allRows.length);
  let out='<div class="row head"><div>Start</div><div>Reaches 1?</div><div>Steps</div><div>Collatz chain</div></div>';
- for(const r of rows){
-  out+='<div class="row '+(r.start===longest.start?'highlight':'')+'"><div class="number">'+r.start+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+r.steps+'</div><div class="chain">'+r.chain.join(' → ')+'</div></div>';
+ for(let i=first;i<last;i++){
+  const r=allRows[i];
+  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+r.steps.toLocaleString()+'</div><div class="chain">'+r.chain.join(' → ')+'</div></div>';
  }
  el('results').innerHTML=out;
+ const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+(first+1).toLocaleString()+'–'+last.toLocaleString()+' of '+allRows.length.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
+ for(const id of ['pagination','paginationBottom']){
+  el(id).innerHTML=pager;
+  el(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{currentPage=Number(b.dataset.page);renderPage();}));
+ }
+}
+let longestStart=1;
+async function build(){
+ const token=++buildToken;
+ const raw=Number(el('max').value);
+ if(!Number.isFinite(raw)||raw<1){el('max').value=1;return;}
+ const limit=Math.min(1000000,Math.floor(raw));
+ el('max').value=limit;
+ el('build').disabled=true;
+ el('stats').innerHTML='<div class="stat">Calculating 1–'+limit.toLocaleString()+'…</div>';
+ el('results').innerHTML='<div style="padding:20px;color:var(--muted)">Calculating chains…</div>';
+ allRows=[];let longestSteps=-1;longestStart=1;
+ for(let start=1;start<=limit;start++){
+  if(token!==buildToken)return;
+  const result=getChain(start),steps=result.chain.length-1;
+  allRows.push({start,steps,reaches:result.reaches,chain:result.chain});
+  if(steps>longestSteps){longestSteps=steps;longestStart=start;}
+  if(start%250===0||start===limit){
+   el('stats').innerHTML='<div class="stat">Calculating: <strong>'+start.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>';
+   await new Promise(resolve=>setTimeout(resolve,0));
+  }
+ }
+ const reached=allRows.filter(r=>r.reaches).length;
+ el('stats').innerHTML=
+  '<div class="stat">Starting numbers checked: <strong>1–'+limit.toLocaleString()+'</strong></div>'+
+  '<div class="stat">Reached 1: <strong>'+reached.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>'+
+  '<div class="stat">Longest chain: <strong>'+longestSteps.toLocaleString()+' steps</strong> (starts at '+longestStart.toLocaleString()+')</div>';
+ currentPage=1;renderPage();el('build').disabled=false;
 }
 el('build').addEventListener('click',build);
 el('max').addEventListener('keydown',e=>{if(e.key==='Enter')build()});
