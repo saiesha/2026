@@ -45,6 +45,27 @@ function build(){
    parentOf.set(value,successor(value));
   }
  }
+ // Add the immediate reverse predecessors of every required value 1..limit.
+ // These are 2n and (n-1)/3 when the latter is a positive integer.
+ // We add one reverse layer only; recursively doubling every extra node would be infinite.
+ for(let target=1;target<=limit;target++){
+  const predecessors=[target*2];
+  const inverse=(target-1)/3;
+  if(Number.isInteger(inverse)&&inverse>0)predecessors.push(inverse);
+  for(const candidate of predecessors){
+   if(parentOf.has(candidate))continue;
+   let n=candidate,trail=[];
+   while(!parentOf.has(n)){
+    trail.push(n);
+    n=successor(n);
+    if(trail.length>1000000)throw new Error('Path limit exceeded');
+   }
+   for(let i=trail.length-1;i>=0;i--){
+    const value=trail[i];
+    parentOf.set(value,successor(value));
+   }
+  }
+ }
  const childrenOf=new Map();
  for(const [n,parent] of parentOf){
   if(parent===null)continue;
