@@ -18,17 +18,17 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 <header><h1>Collatz <span>Chain Explorer</span></h1><p>Explore Collatz sequences continuously. Generate more starting numbers whenever you want.</p></header>
 <main>
 <section class="controls">
-<div><strong>Continuous exploration</strong><div class="note" style="margin:4px 0 0">Starts at 1 and keeps extending the range in batches of 10,000.</div></div>
-<button id="build">Continue generating (+10,000)</button>
+<div><strong>Continuous exploration</strong><div class="note" style="margin:4px 0 0">Starts at 1 and extends the range by 1 crore (10,000,000) numbers per click.</div></div>
+<button id="build">Continue generating (+1 crore)</button>
 </section>
 <p class="note">Rule: if n is even, the next number is n ÷ 2. If n is odd, the next number is 3n + 1. The step count is the number of transitions needed to reach 1.</p>
 <div class="stats" id="stats"></div>
 <div class="pagination" id="pagination"></div><div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div><div class="pagination" id="paginationBottom"></div>
-<div class="legend">The highlighted row is the starting number with the longest chain generated so far. Results and memoized values remain cached as you continue. Your browser still has practical memory and performance limits.</div>
+<div class="legend">The highlighted row is the starting number with the longest chain generated so far. Results and memoized values remain cached as you continue. Very large batches can require substantial browser memory and may slow down or crash the tab.</div>
 </main>
 <script>
 const el=id=>document.getElementById(id);
-const PAGE_SIZE=100,BATCH_SIZE=10000;
+const PAGE_SIZE=100,BATCH_SIZE=10000000;
 let allRows=[],currentPage=1,buildToken=0,longestStart=1,longestSteps=-1,reachedCount=0,nextStart=1;
 let cache=new Map([[1,{reaches:true,steps:0,next:null}]]);
 function calculate(start){
@@ -106,7 +106,7 @@ async function build(){
   '<div class="stat">Memoized results: <strong>'+cache.size.toLocaleString()+'</strong></div>'+
   '<div class="stat">Newly added: <strong>'+(allRows.length-initial).toLocaleString()+'</strong></div>';
  currentPage=Math.ceil(allRows.length/PAGE_SIZE);renderPage();
- el('build').disabled=false;el('build').textContent='Continue generating (+10,000)';
+ el('build').disabled=false;el('build').textContent='Continue generating (+1 crore)';
 }
 el('build').addEventListener('click',build);
 build();
