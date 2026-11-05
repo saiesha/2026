@@ -15,42 +15,40 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 </style>
 </head>
 <body>
-<header><h1>Collatz <span>Chain Explorer</span></h1><p>Test every starting number and inspect the complete sequence until it reaches 1.</p></header>
+<header><h1>Collatz <span>Chain Explorer</span></h1><p>Explore Collatz sequences continuously. Generate more starting numbers whenever you want.</p></header>
 <main>
 <section class="controls">
-<div><label for="max">Check starting numbers from 1 to</label><input id="max" type="number" min="1" max="1000000" value="100"></div>
-<button id="build">Generate chains</button>
+<div><strong>Continuous exploration</strong><div class="note" style="margin:4px 0 0">Starts at 1 and keeps extending the range in batches of 10,000.</div></div>
+<button id="build">Continue generating (+10,000)</button>
 </section>
 <p class="note">Rule: if n is even, the next number is n ÷ 2. If n is odd, the next number is 3n + 1. The step count is the number of transitions needed to reach 1.</p>
 <div class="stats" id="stats"></div>
 <div class="pagination" id="pagination"></div><div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div><div class="pagination" id="paginationBottom"></div>
-<div class="legend">The highlighted row is the starting number with the longest chain in this range.</div>
+<div class="legend">The highlighted row is the starting number with the longest chain generated so far. Results and memoized values remain cached as you continue. Your browser still has practical memory and performance limits.</div>
 </main>
 <script>
 const el=id=>document.getElementById(id);
-const PAGE_SIZE=100;
-let allRows=[],currentPage=1,buildToken=0,longestStart=1;
-let cache=new Map();
+const PAGE_SIZE=100,BATCH_SIZE=10000;
+let allRows=[],currentPage=1,buildToken=0,longestStart=1,longestSteps=-1,reachedCount=0,nextStart=1;
+let cache=new Map([[1,{reaches:true,steps:0,next:null}]]);
 function calculate(start){
  if(cache.has(start))return cache.get(start);
- const path=[],seen=new Set();let n=start,base;
+ const path=[],seen=new Set();let n=start,base=null;
  while(!cache.has(n)&&!seen.has(n)){
   seen.add(n);path.push(n);
   const next=n%2===0?n/2:3*n+1;
-  if(!Number.isSafeInteger(next)){
-   // Values beyond JavaScript's exact integer range are not evaluated inaccurately.
-   base={reaches:false,steps:null};break;
-  }
+  if(!Number.isSafeInteger(next)){base={reaches:false,steps:null,next:null};break;}
   n=next;
  }
- if(!base){
-  if(cache.has(n))base=cache.get(n);
-  else base={reaches:false,steps:null}; // A cycle was encountered.
- }
+ if(!base)base=cache.has(n)?cache.get(n):{reaches:false,steps:null,next:null};
  for(let i=path.length-1;i>=0;i--){
   const value=path[i],next=value%2===0?value/2:3*value+1;
-  base={reaches:base.reaches,steps:base.reaches?base.steps+1:null};
-  cache.set(value,{...base,next});
+  if(!base.reaches||!Number.isSafeInteger(next)){
+   base={reaches:false,steps:null,next:null};
+  }else{
+   base={reaches:true,steps:base.steps+1,next};
+  }
+  cache.set(value,base);
  }
  return cache.get(start);
 }
@@ -58,9 +56,8 @@ function getChain(start){
  const chain=[start],seen=new Set();let n=start;
  while(n!==1&&cache.has(n)){
   if(seen.has(n))break;
-  seen.add(n);
-  const entry=cache.get(n);
-  if(entry.next===undefined||entry.next===null)break;
+  seen.add(n);const entry=cache.get(n);
+  if(entry.next===null||entry.next===undefined)break;
   n=entry.next;chain.push(n);
  }
  return chain;
@@ -72,45 +69,46 @@ function renderPage(){
  let out='<div class="row head"><div>Start</div><div>Reaches 1?</div><div>Steps</div><div>Collatz chain</div></div>';
  for(let i=first;i<last;i++){
   const r=allRows[i],chain=getChain(r.start);
-  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+(r.steps===null?'—':r.steps.toLocaleString())+'</div><div class="chain">'+chain.join(' → ')+(r.reaches?'':' (sequence stopped)')+'</div></div>';
+  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+(r.steps===null?'—':r.steps.toLocaleString())+'</div><div class="chain">'+chain.join(' → ')+(r.reaches?'':' (not resolved)')+'</div></div>';
  }
  el('results').innerHTML=out;
  const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+(first+1).toLocaleString()+'–'+last.toLocaleString()+' of '+allRows.length.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
  for(const id of ['pagination','paginationBottom']){
   el(id).innerHTML=pager;
-  el(id).querySelectorAll('button').forEach(b=>b.addEventListener('click',()=>{currentPage=Number(b.dataset.page);renderPage();}));
+  el(id).querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{currentPage=Number(btn.dataset.page);renderPage();}));
  }
 }
 async function build(){
- const token=++buildToken,raw=Number(el('max').value);
- if(!Number.isFinite(raw)||raw<1){el('max').value=1;return;}
- const limit=Math.min(1000000,Math.floor(raw));
- el('max').value=limit;el('build').disabled=true;
- el('stats').innerHTML='<div class="stat">Calculating 1–'+limit.toLocaleString()+'…</div>';
- el('results').innerHTML='<div style="padding:20px;color:var(--muted)">Calculating with cached results…</div>';
- cache=new Map([[1,{reaches:true,steps:0,next:null}]]);
- allRows=[];let longestSteps=-1,longestStartLocal=1,reached=0;
- for(let start=1;start<=limit;start++){
+ if(el('build').disabled)return;
+ const token=++buildToken,from=nextStart,to=from+BATCH_SIZE-1;
+ if(!Number.isSafeInteger(to)){el('stats').innerHTML='<div class="stat">JavaScript safe-integer limit reached for starting numbers.</div>';return;}
+ el('build').disabled=true;el('build').textContent='Generating…';
+ const initial=allRows.length;
+ for(let start=from;start<=to;start++){
   if(token!==buildToken)return;
+  // Each start is new, but its path immediately reuses any cached intermediate value.
   const result=calculate(start);
   allRows.push({start,steps:result.steps,reaches:result.reaches});
-  if(result.reaches)reached++;
-  if(result.reaches&&result.steps>longestSteps){longestSteps=result.steps;longestStartLocal=start;}
-  if(start%1000===0||start===limit){
-   el('stats').innerHTML='<div class="stat">Calculating: <strong>'+start.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div><div class="stat">Cached values: <strong>'+cache.size.toLocaleString()+'</strong></div>';
+  if(result.reaches){
+   reachedCount++;
+   if(result.steps>longestSteps){longestSteps=result.steps;longestStart=start;}
+  }
+  if((start-from+1)%500===0||start===to){
+   el('stats').innerHTML='<div class="stat">Checked: <strong>1–'+start.toLocaleString()+'</strong></div><div class="stat">This batch: <strong>'+(start-from+1).toLocaleString()+' / '+BATCH_SIZE.toLocaleString()+'</strong></div><div class="stat">Memoized values: <strong>'+cache.size.toLocaleString()+'</strong></div>';
    await new Promise(resolve=>setTimeout(resolve,0));
   }
  }
- longestStart=longestStartLocal;
+ nextStart=to+1;
  el('stats').innerHTML=
-  '<div class="stat">Starting numbers checked: <strong>1–'+limit.toLocaleString()+'</strong></div>'+
-  '<div class="stat">Reached 1: <strong>'+reached.toLocaleString()+' / '+limit.toLocaleString()+'</strong></div>'+
+  '<div class="stat">Starting numbers checked: <strong>1–'+(nextStart-1).toLocaleString()+'</strong></div>'+
+  '<div class="stat">Reached 1: <strong>'+reachedCount.toLocaleString()+' / '+allRows.length.toLocaleString()+'</strong></div>'+
   '<div class="stat">Longest chain: <strong>'+Math.max(0,longestSteps).toLocaleString()+' steps</strong> (starts at '+longestStart.toLocaleString()+')</div>'+
-  '<div class="stat">Memoized results: <strong>'+cache.size.toLocaleString()+'</strong></div>';
- currentPage=1;renderPage();el('build').disabled=false;
+  '<div class="stat">Memoized results: <strong>'+cache.size.toLocaleString()+'</strong></div>'+
+  '<div class="stat">Newly added: <strong>'+(allRows.length-initial).toLocaleString()+'</strong></div>';
+ currentPage=Math.ceil(allRows.length/PAGE_SIZE);renderPage();
+ el('build').disabled=false;el('build').textContent='Continue generating (+10,000)';
 }
 el('build').addEventListener('click',build);
-el('max').addEventListener('keydown',e=>{if(e.key==='Enter')build()});
 build();
 </script>
 </body></html>
