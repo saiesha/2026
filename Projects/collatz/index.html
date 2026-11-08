@@ -24,6 +24,14 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 <p class="note">Rule: if n is even, the next number is n ÷ 2. If n is odd, the next number is 3n + 1. The step count is the number of transitions needed to reach 1.</p>
 <div class="stats" id="stats"></div>
 <div class="pagination" id="pagination"></div><div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div><div class="pagination" id="paginationBottom"></div>
+<section class="controls" style="margin-top:24px;align-items:center">
+ <div><strong>Inverse Collatz tree</strong><div class="note" style="margin:4px 0 0">From each node A, the left child is 2A. The right child is (A−1)/3 only when it is a positive odd integer.</div></div>
+ <label style="margin:0">Tree depth <input id="treeDepth" type="number" min="1" max="12" value="6" style="width:90px;margin-left:8px"></label>
+ <button id="drawTree">Generate tree</button>
+</section>
+<div class="note" id="treeSummary">Root: 1. Powers of 2 form the left branch: 1 → 2 → 4 → 8 → 16 → …</div>
+<div id="inverseTree" class="table-wrap" style="padding:14px;overflow:auto"></div>
+<div class="legend">The tree is a finite-depth view of an infinite inverse graph. A repeated ancestor is shown as a cycle and is not expanded again. The same number may appear in different branches.</div>
 <div class="legend">Only maxVerified is retained as Collatz result state. Every number from 1 through maxVerified has been verified to reach 1. Visible chains are recalculated when you view a page; they are not stored. A detected cycle or unsafe integer stops verification.</div>
 </main>
 <script>
@@ -82,8 +90,35 @@ async function build(){
  currentPage=Math.max(1,Math.ceil(maxVerified/PAGE_SIZE));renderPage();
  button.disabled=false;button.textContent='Continue generating (+1 crore)';
 }
-el('build').addEventListener('click',build);
+el('build').addEventListener('click',build);\n
+function inverseRight(a){
+ const candidate=(a-1)/3;
+ return Number.isInteger(candidate)&&candidate>0&&candidate%2===1?candidate:null;
+}
+function treeNode(a,depth,maxDepth,ancestors){
+ const cycle=ancestors.has(a);
+ let html='<li><span class="number">'+a.toLocaleString()+'</span>';
+ if(cycle)return html+' <span class="note">(cycle to an ancestor)</span></li>';
+ if(depth<maxDepth){
+  const nextAncestors=new Set(ancestors);nextAncestors.add(a);
+  const left=a*2,right=inverseRight(a);
+  html+='<ul><li><span class="note">Left: 2A → </span>'+treeNode(left,depth+1,maxDepth,nextAncestors).replace(/^<li>/,'').replace(/<\/li>$/,'')+'</li>';
+  if(right!==null)html+='<li><span class="note">Right: (A−1)/3 → </span>'+treeNode(right,depth+1,maxDepth,nextAncestors).replace(/^<li>/,'').replace(/<\/li>$/,'')+'</li>';
+  else html+='<li class="note">Right: no valid positive odd integer</li>';
+  html+='</ul>';
+ }
+ return html+'</li>';
+}
+function drawInverseTree(){
+ const depth=Math.max(1,Math.min(12,Number(el('treeDepth').value)||6));
+ el('treeDepth').value=depth;
+ el('inverseTree').innerHTML='<ul style="list-style-type:none;padding-left:8px">'+treeNode(1,0,depth,new Set())+'</ul>';
+ el('treeSummary').textContent='Root: 1 · Depth: '+depth+' · Left child = 2A · Right child = (A−1)/3 when it is a positive odd integer.';
+}
+el('drawTree').addEventListener('click',drawInverseTree);
+drawInverseTree();
+
 el('stats').innerHTML='<div class="stat">Verified starting numbers: <strong>1–1</strong></div><div class="stat">Persistent Collatz result: <strong>maxVerified = 1</strong></div>';
-renderPage();build();
+renderPage();drawInverseTree();build();
 </script>
 </body></html>
