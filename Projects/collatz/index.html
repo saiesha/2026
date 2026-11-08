@@ -24,91 +24,66 @@ label{display:block;margin-bottom:5px;color:#dce7f8}input{width:170px;padding:10
 <p class="note">Rule: if n is even, the next number is n ÷ 2. If n is odd, the next number is 3n + 1. The step count is the number of transitions needed to reach 1.</p>
 <div class="stats" id="stats"></div>
 <div class="pagination" id="pagination"></div><div class="table-wrap" id="results"><div style="padding:20px;color:var(--muted)">Generating Collatz chains…</div></div><div class="pagination" id="paginationBottom"></div>
-<div class="legend">The highlighted row is the starting number with the longest chain generated so far. Results and memoized values remain cached as you continue. Very large batches can require substantial browser memory and may slow down or crash the tab.</div>
+<div class="legend">Only maxVerified is retained as Collatz result state. Every number from 1 through maxVerified has been verified to reach 1. Visible chains are recalculated when you view a page; they are not stored. A detected cycle or unsafe integer stops verification.</div>
 </main>
 <script>
 const el=id=>document.getElementById(id);
 const PAGE_SIZE=100,BATCH_SIZE=10000000;
-let allRows=[],currentPage=1,buildToken=0,longestStart=1,longestSteps=-1,reachedCount=0,nextStart=1;
-let cache=new Map([[1,{reaches:true,steps:0,next:null}]]);
-function calculate(start){
- if(cache.has(start))return cache.get(start);
- const path=[],seen=new Set();let n=start,base=null;
- while(!cache.has(n)&&!seen.has(n)){
-  seen.add(n);path.push(n);
-  const next=n%2===0?n/2:3*n+1;
-  if(!Number.isSafeInteger(next)){base={reaches:false,steps:null,next:null};break;}
-  n=next;
+let maxVerified=1,currentPage=1;
+function next(n){return n%2===0?n/2:3*n+1;}
+function reachesVerifiedRange(start){
+ let n=start,slow=start,fast=start;
+ while(n>maxVerified){
+  n=next(n);
+  if(!Number.isSafeInteger(n))return false;
+  if(n<=maxVerified)return true;
+  slow=next(slow);fast=next(next(fast));
+  if(!Number.isSafeInteger(slow)||!Number.isSafeInteger(fast))return false;
+  if(slow===fast&&slow>maxVerified)return false;
  }
- if(!base)base=cache.has(n)?cache.get(n):{reaches:false,steps:null,next:null};
- for(let i=path.length-1;i>=0;i--){
-  const value=path[i],next=value%2===0?value/2:3*value+1;
-  if(!base.reaches||!Number.isSafeInteger(next)){
-   base={reaches:false,steps:null,next:null};
-  }else{
-   base={reaches:true,steps:base.steps+1,next};
-  }
-  cache.set(value,base);
- }
- return cache.get(start);
+ return true;
 }
-function getChain(start){
- const chain=[start],seen=new Set();let n=start;
- while(n!==1&&cache.has(n)){
-  if(seen.has(n))break;
-  seen.add(n);const entry=cache.get(n);
-  if(entry.next===null||entry.next===undefined)break;
-  n=entry.next;chain.push(n);
- }
- return chain;
+function traceToOne(start){
+ const chain=[start];let n=start,guard=0;
+ while(n!==1&&guard<1000000){n=next(n);chain.push(n);guard++;if(!Number.isSafeInteger(n))return {chain,steps:null};}
+ return {chain,steps:n===1?chain.length-1:null};
 }
 function renderPage(){
- const totalPages=Math.max(1,Math.ceil(allRows.length/PAGE_SIZE));
+ const total=maxVerified,totalPages=Math.max(1,Math.ceil(total/PAGE_SIZE));
  currentPage=Math.min(Math.max(1,currentPage),totalPages);
- const first=(currentPage-1)*PAGE_SIZE,last=Math.min(first+PAGE_SIZE,allRows.length);
+ const first=(currentPage-1)*PAGE_SIZE+1,last=Math.min(first+PAGE_SIZE-1,total);
  let out='<div class="row head"><div>Start</div><div>Reaches 1?</div><div>Steps</div><div>Collatz chain</div></div>';
- for(let i=first;i<last;i++){
-  const r=allRows[i],chain=getChain(r.start);
-  out+='<div class="row '+(r.start===longestStart?'highlight':'')+'"><div class="number">'+r.start.toLocaleString()+'</div><div class="'+(r.reaches?'yes':'')+'">'+(r.reaches?'Yes':'No')+'</div><div class="steps">'+(r.steps===null?'—':r.steps.toLocaleString())+'</div><div class="chain">'+chain.join(' → ')+(r.reaches?'':' (not resolved)')+'</div></div>';
+ for(let start=first;start<=last;start++){
+  const result=traceToOne(start);
+  out+='<div class="row"><div class="number">'+start.toLocaleString()+'</div><div class="yes">Yes</div><div class="steps">'+(result.steps===null?'—':result.steps.toLocaleString())+'</div><div class="chain">'+result.chain.join(' → ')+'</div></div>';
  }
  el('results').innerHTML=out;
- const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+(first+1).toLocaleString()+'–'+last.toLocaleString()+' of '+allRows.length.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
+ const pager='<button '+(currentPage===1?'disabled':'')+' data-page="'+(currentPage-1)+'">Previous</button><span>Page '+currentPage.toLocaleString()+' of '+totalPages.toLocaleString()+' · Showing '+first.toLocaleString()+'–'+last.toLocaleString()+' of '+total.toLocaleString()+'</span><button '+(currentPage===totalPages?'disabled':'')+' data-page="'+(currentPage+1)+'">Next</button>';
  for(const id of ['pagination','paginationBottom']){
   el(id).innerHTML=pager;
   el(id).querySelectorAll('button').forEach(btn=>btn.addEventListener('click',()=>{currentPage=Number(btn.dataset.page);renderPage();}));
  }
 }
 async function build(){
- if(el('build').disabled)return;
- const token=++buildToken,from=nextStart,to=from+BATCH_SIZE-1;
- if(!Number.isSafeInteger(to)){el('stats').innerHTML='<div class="stat">JavaScript safe-integer limit reached for starting numbers.</div>';return;}
- el('build').disabled=true;el('build').textContent='Generating…';
- const initial=allRows.length;
+ const button=el('build');if(button.disabled)return;
+ const from=maxVerified+1,to=from+BATCH_SIZE-1;
+ if(!Number.isSafeInteger(to)){el('stats').innerHTML='<div class="stat">JavaScript safe-integer limit reached.</div>';return;}
+ button.disabled=true;button.textContent='Generating…';
+ let checked=0,stoppedAt=null;
  for(let start=from;start<=to;start++){
-  if(token!==buildToken)return;
-  // Each start is new, but its path immediately reuses any cached intermediate value.
-  const result=calculate(start);
-  allRows.push({start,steps:result.steps,reaches:result.reaches});
-  if(result.reaches){
-   reachedCount++;
-   if(result.steps>longestSteps){longestSteps=result.steps;longestStart=start;}
-  }
-  if((start-from+1)%500===0||start===to){
-   el('stats').innerHTML='<div class="stat">Checked: <strong>1–'+start.toLocaleString()+'</strong></div><div class="stat">This batch: <strong>'+(start-from+1).toLocaleString()+' / '+BATCH_SIZE.toLocaleString()+'</strong></div><div class="stat">Memoized values: <strong>'+cache.size.toLocaleString()+'</strong></div>';
+  if(!reachesVerifiedRange(start)){stoppedAt=start;break;}
+  maxVerified=start;checked++;
+  if(checked%1000===0||start===to){
+   el('stats').innerHTML='<div class="stat">Verified continuously: <strong>1–'+maxVerified.toLocaleString()+'</strong></div><div class="stat">This batch: <strong>'+checked.toLocaleString()+' / '+BATCH_SIZE.toLocaleString()+'</strong></div><div class="stat">Persistent Collatz result: <strong>maxVerified = '+maxVerified.toLocaleString()+'</strong></div>';
    await new Promise(resolve=>setTimeout(resolve,0));
   }
  }
- nextStart=to+1;
- el('stats').innerHTML=
-  '<div class="stat">Starting numbers checked: <strong>1–'+(nextStart-1).toLocaleString()+'</strong></div>'+
-  '<div class="stat">Reached 1: <strong>'+reachedCount.toLocaleString()+' / '+allRows.length.toLocaleString()+'</strong></div>'+
-  '<div class="stat">Longest chain: <strong>'+Math.max(0,longestSteps).toLocaleString()+' steps</strong> (starts at '+longestStart.toLocaleString()+')</div>'+
-  '<div class="stat">Memoized results: <strong>'+cache.size.toLocaleString()+'</strong></div>'+
-  '<div class="stat">Newly added: <strong>'+(allRows.length-initial).toLocaleString()+'</strong></div>';
- currentPage=Math.ceil(allRows.length/PAGE_SIZE);renderPage();
- el('build').disabled=false;el('build').textContent='Continue generating (+1 crore)';
+ el('stats').innerHTML='<div class="stat">Verified starting numbers: <strong>1–'+maxVerified.toLocaleString()+'</strong></div><div class="stat">Reached 1: <strong>'+maxVerified.toLocaleString()+' / '+maxVerified.toLocaleString()+'</strong></div><div class="stat">Persistent Collatz result: <strong>maxVerified = '+maxVerified.toLocaleString()+'</strong></div><div class="stat">Newly verified: <strong>'+checked.toLocaleString()+'</strong></div>'+(stoppedAt===null?'':'<div class="stat">Could not verify next start: <strong>'+stoppedAt.toLocaleString()+'</strong> (cycle or unsafe integer detected)</div>');
+ currentPage=Math.max(1,Math.ceil(maxVerified/PAGE_SIZE));renderPage();
+ button.disabled=false;button.textContent='Continue generating (+1 crore)';
 }
 el('build').addEventListener('click',build);
-build();
+el('stats').innerHTML='<div class="stat">Verified starting numbers: <strong>1–1</strong></div><div class="stat">Persistent Collatz result: <strong>maxVerified = 1</strong></div>';
+renderPage();build();
 </script>
 </body></html>
